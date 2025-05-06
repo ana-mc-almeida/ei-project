@@ -38,5 +38,7 @@ override.tf.json
 .aws/
 
 # Ignore SSH keys
-.pem/
+*.pem
+
+*.terraform.*
 
