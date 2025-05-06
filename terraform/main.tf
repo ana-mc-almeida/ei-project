@@ -11,3 +11,12 @@ provider "aws" {
     region = "us-east-1"
     shared_credentials_files = [ "../.aws/credentials" ]
 }
+
+module "kafka-cluster" {
+    source = "./modules/kafka-cluster"
+    nBroker = 3
+}
+
+output "kafka_ips" {
+  value = module.kafka-cluster.publicdnslist
+}
