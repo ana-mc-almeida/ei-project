@@ -37,3 +37,6 @@ override.tf.json
 # AWS credentials if accidentally copied to repo (not recommended)
 .aws/
 
+# Ignore SSH keys
+.pem/
+
