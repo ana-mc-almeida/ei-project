@@ -77,3 +77,31 @@ variable "security_group_name" {
   type        = string
   default     = "kafka-cluster"
 }
+
+resource "null_resource" "kafkaClusterSetup" {
+  count      = length(aws_instance.kafkaBroker)
+
+  connection {
+    type        = "ssh"
+    host        = aws_instance.kafkaBroker[count.index].public_dns
+    user        = "ec2-user"
+    private_key = file("../labsuser.pem")
+    timeout     = "30s"
+  }
+
+  provisioner "file" {
+    content = templatefile("${var.basePath}setup.sh", {
+      publicdnslist = join(" ", aws_instance.kafkaBroker[*].public_dns)
+    })
+    destination = "/tmp/setup.sh"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "while [ ! -f /tmp/user_data_complete ]; do sleep 5; done",
+      "chmod +x /tmp/setup.sh",
+      "sudo /tmp/setup.sh",
+      "rm -rf /tmp/setup.sh",
+    ]
+  }
+}

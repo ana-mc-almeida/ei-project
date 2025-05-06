@@ -26,4 +26,6 @@ sudo sed -i "s/offsets.topic.replication.factor=1/offsets.topic.replication.fact
 sudo sed -i "s/transaction.state.log.replication.factor=1/transaction.state.log.replication.factor=${totalBrokers}/g" /usr/local/kafka/config/server.properties
 sudo sed -i "s/transaction.state.log.min.isr=1/transaction.state.log.min.isr=${totalBrokers}/g" /usr/local/kafka/config/server.properties
 
+touch /tmp/user_data_complete
+
 echo "Finished."
