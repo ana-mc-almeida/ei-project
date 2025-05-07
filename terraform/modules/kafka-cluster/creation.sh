@@ -20,7 +20,7 @@ sudo tar -zxf kafka_2.13-3.9.0.tgz
 sudo mv kafka_2.13-3.9.0 /usr/local/kafka
 sudo mkdir /tmp/kafka-logs
 address=`curl http://169.254.169.254/latest/meta-data/public-hostname`
-sudo sed -i "s/#listeners=PLAINTEXT:\/\/:9092/listeners=PLAINTEXT:\/\/$address:9092/g" /usr/local/kafka/config/server.properties
+sudo sed -i "/^#listeners=PLAINTEXT:\/\/:9092/ s|$|,PLAINTEXT://$address:9092|" /usr/local/kafka/config/server.properties
 sudo sed -i "s/broker.id=0/broker.id=${idBroker+1}/g" /usr/local/kafka/config/server.properties
 sudo sed -i "s/offsets.topic.replication.factor=1/offsets.topic.replication.factor=${totalBrokers}/g" /usr/local/kafka/config/server.properties
 sudo sed -i "s/transaction.state.log.replication.factor=1/transaction.state.log.replication.factor=${totalBrokers}/g" /usr/local/kafka/config/server.properties

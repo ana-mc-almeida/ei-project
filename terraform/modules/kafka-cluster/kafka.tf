@@ -91,7 +91,7 @@ resource "null_resource" "kafkaClusterSetup" {
 
   provisioner "file" {
     content = templatefile("${var.basePath}setup.sh", {
-      privatednslist = join(" ", aws_instance.kafkaBroker[*].private_dns)
+      publicdnslist = join(" ", aws_instance.kafkaBroker[*].public_dns)
     })
     destination = "/tmp/setup.sh"
   }
