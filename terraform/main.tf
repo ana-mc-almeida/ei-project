@@ -25,6 +25,21 @@ module "kafka-cluster" {
     nBroker = 3
 }
 
+module "rds" {
+    source = "./modules/rds"
+    db_username = "ie_project"
+    db_password = "password"
+    db_name = "database_laas"
+}
+
 output "kafka_ips" {
   value = module.kafka-cluster.publicdnslist
+}
+
+output "rds_address" {
+  value = module.rds.address
+}
+
+output "rds_port" {
+  value = module.rds.port
 }
