@@ -6,7 +6,15 @@ terraform {
             version = "~> 4.0"
         }
     }
+
+      backend "s3" {
+        bucket = "terraform-ie-project-bucket"
+        key = "terraform.tfstate"
+        region = "us-east-1"
+        shared_credentials_file = "../.aws/credentials"
+    }
 }
+
 provider "aws" {
     region = "us-east-1"
     shared_credentials_files = [ "../.aws/credentials" ]
