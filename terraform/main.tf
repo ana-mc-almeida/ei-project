@@ -32,6 +32,10 @@ module "rds" {
     db_name = "database_laas"
 }
 
+module "ollama" {
+    source = "./modules/ollama"
+}
+
 output "kafka_ips" {
   value = module.kafka-cluster.publicdnslist
 }
@@ -42,4 +46,8 @@ output "rds_address" {
 
 output "rds_port" {
   value = module.rds.port
+}
+
+output "ollama_address" {
+  value = module.ollama.address
 }
