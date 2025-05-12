@@ -20,16 +20,42 @@ provider "aws" {
     shared_credentials_files = [ "../.aws/credentials" ]
 }
 
+variable "nBroker" {
+  description = "number of brokers"
+  type        = number
+  default     = 3
+}
+
+variable "db_username" {
+  description = "The username for the database"
+  type        = string
+  sensitive   = true
+  default     = "ie_project"
+}
+
+variable "db_password" {
+  description = "The password for the database"
+  type        = string
+  sensitive   = true
+  default     = "password"
+}
+
+variable "db_name" {
+  description = "The name to use for the database"
+  type        = string
+  default     = "laas"
+}
+
 module "kafka-cluster" {
     source = "./modules/kafka-cluster"
-    nBroker = 3
+    nBroker = var.nBroker
 }
 
 module "rds" {
     source = "./modules/rds"
-    db_username = "ie_project"
-    db_password = "password"
-    db_name = "database_laas"
+    db_username = var.db_username
+    db_password = var.db_password
+    db_name = var.db_name
 }
 
 module "ollama" {
