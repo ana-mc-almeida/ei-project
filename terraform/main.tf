@@ -46,6 +46,24 @@ variable "db_name" {
   default     = "laas"
 }
 
+variable "docker_image_user" {
+  description = "The username to use for the docker image"
+  type        = string
+  default     = "docker_image_user"
+}
+
+variable "docker_image_pull_token" {
+  description = "The password/token to use to pull the docker image"
+  type        = string
+  default     = "password"
+}
+
+variable "docker_image_create_token" {
+  description = "The password/token to use to create the docker image"
+  type        = string
+  default     = "password"
+}
+
 module "kafka-cluster" {
     source = "./modules/kafka-cluster"
     nBroker = var.nBroker
@@ -76,4 +94,26 @@ output "rds_port" {
 
 output "ollama_address" {
   value = module.ollama.address
+}
+
+module "purchases" {
+    source = "./modules/purchases"
+    kafka_brokers = module.kafka-cluster.publicdnslist
+    rds_address = module.rds.address
+    rds_port = module.rds.port
+    db_username = var.db_username
+    db_password = var.db_password
+    db_name = var.db_name
+    docker_image_create_token = var.docker_image_create_token
+    docker_image_pull_token = var.docker_image_pull_token
+    docker_image_user = var.docker_image_user
+
+    depends_on = [  
+        module.kafka-cluster,
+        module.rds,
+    ]
+}
+
+output "purchasesAddress" {
+  value = module.purchases.purchasesAddress
 }
