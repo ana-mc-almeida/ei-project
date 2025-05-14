@@ -25,6 +25,8 @@ sudo sed -i "s/broker.id=0/broker.id=${idBroker+1}/g" /usr/local/kafka/config/se
 sudo sed -i "s/offsets.topic.replication.factor=1/offsets.topic.replication.factor=${totalBrokers}/g" /usr/local/kafka/config/server.properties
 sudo sed -i "s/transaction.state.log.replication.factor=1/transaction.state.log.replication.factor=${totalBrokers}/g" /usr/local/kafka/config/server.properties
 sudo sed -i "s/transaction.state.log.min.isr=1/transaction.state.log.min.isr=${totalBrokers}/g" /usr/local/kafka/config/server.properties
+sudo sed -i "s/^num.partitions=1/num.partitions=${totalBrokers}/g" /usr/local/kafka/config/server.properties
+echo "default.replication.factor=${totalBrokers}" >> /usr/local/kafka/config/server.properties
 
 touch /tmp/user_data_complete
 

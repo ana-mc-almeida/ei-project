@@ -65,7 +65,6 @@ resource "aws_instance" "deployQuarkusPurchases" {
   vpc_security_group_ids      = [aws_security_group.instance.id]
   key_name                    = "vockey"
   user_data = base64encode(templatefile("${var.basePath}creation.sh", {
-    debug               = "ola"
     docker_username     = var.docker_image_user
     docker_password     = var.docker_image_pull_token
     rds_address         = var.rds_address

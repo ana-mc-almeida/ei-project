@@ -1,15 +1,6 @@
 #!/bin/bash
 echo "Starting..."
 
-echo "DEBUG: kafka_brokers='${kafka_brokers}'" >> /tmp/debug.log
-echo "DEBUG: rds_address='${rds_address}'" >> /tmp/debug.log
-echo "DEBUG: rds_port='${rds_port}'" >> /tmp/debug.log
-echo "DEBUG: db_username='${db_username}'" >> /tmp/debug.log
-echo "DEBUG: db_password='${db_password}'" >> /tmp/debug.log
-echo "DEBUG: docker_username='${docker_username}'" >> /tmp/debug.log
-echo "DEBUG: docker_password='${docker_password}'" >> /tmp/debug.log
-echo "DEBUG: debug='${debug}'" >> /tmp/debug.log
-
 kafka_brokers="${kafka_brokers}"
 
 i=1
