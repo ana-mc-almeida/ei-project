@@ -30,12 +30,7 @@ public class ShopResource {
     
     private void initdb() {
         // In a production environment this configuration SHOULD NOT be used
-        client.query("DROP TABLE IF EXISTS Shops").execute()
-        .flatMap(r -> client.query("CREATE TABLE Shops (id SERIAL PRIMARY KEY, name TEXT NOT NULL, location TEXT NOT NULL)").execute())
-        .flatMap(r -> client.query("INSERT INTO Shops (name,location) VALUES ('ArcoCegoLisbon','Lisboa')").execute())
-        .flatMap(r -> client.query("INSERT INTO Shops (name,location) VALUES ('PracadeBocage','Setubal')").execute())
-        .flatMap(r -> client.query("INSERT INTO Shops (name,location) VALUES ('PracadaBoavista','Porto')").execute())
-        .flatMap(r -> client.query("INSERT INTO Shops (name,location) VALUES ('PracaDomFranciscoGomes','Faro')").execute())
+        client.query("CREATE TABLE IF NOT EXISTS Shops (id SERIAL PRIMARY KEY, name TEXT NOT NULL, address TEXT NOT NULL, postalCode TEXT NOT NULL)").execute()
         .await().indefinitely();
     }
     
@@ -54,7 +49,7 @@ public class ShopResource {
      
     @POST
     public Uni<Response> create(Shop shop) {
-        return shop.save(client , shop.name , shop.location)
+        return shop.save(client , shop.name , shop.address , shop.postalCode)
                 .onItem().transform(id -> URI.create("/shop/" + id))
                 .onItem().transform(uri -> Response.created(uri).build());
     }
@@ -68,9 +63,9 @@ public class ShopResource {
     }
 
     @PUT
-    @Path("/{id}/{name}/{location}")
-    public Uni<Response> update(Long id , String name , String location) {
-        return Shop.update(client, id , name , location)
+    @Path("/{id}")
+    public Uni<Response> update(Long id , Shop shop) {
+        return Shop.update(client, id , shop.name , shop.address , shop.postalCode)
                 .onItem().transform(updated -> updated ? Response.Status.NO_CONTENT : Response.Status.NOT_FOUND)
                 .onItem().transform(status -> Response.status(status).build());
     }
