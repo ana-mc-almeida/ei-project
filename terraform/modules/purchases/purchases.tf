@@ -54,7 +54,13 @@ variable "db_password" {
 variable "basePath" {
   description = "Path for the kafka cluster module"
   type        = string
-  default     = "modules/purchases/"
+  default     = "modules/"
+}
+
+variable "module_name" {
+  description = "Name of the module"
+  type        = string
+  default     = "purchases"
 }
 
 resource "aws_instance" "deployQuarkusPurchases" {
@@ -64,7 +70,8 @@ resource "aws_instance" "deployQuarkusPurchases" {
   instance_type               = "t4g.nano"
   vpc_security_group_ids      = [aws_security_group.instance.id]
   key_name                    = "vockey"
-  user_data = base64encode(templatefile("${var.basePath}creation.sh", {
+  user_data = base64encode(templatefile("${var.basePath}MicroservicesCreation.sh", {
+    module_name         = var.module_name
     docker_username     = var.docker_image_user
     docker_password     = var.docker_image_pull_token
     rds_address         = var.rds_address
