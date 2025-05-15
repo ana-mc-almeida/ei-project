@@ -1,8 +1,3 @@
-variable "kafka_brokers" {
-  description = "List of Kafka broker public DNS names"
-  type        = list(string)
-}
-
 variable "rds_address" {
   description = "RDS endpoint address"
   type        = string
@@ -60,10 +55,10 @@ variable "basePath" {
 variable "module_name" {
   description = "Name of the module"
   type        = string
-  default     = "purchases"
+  default     = "shop"
 }
 
-resource "aws_instance" "deployQuarkusPurchases" {
+resource "aws_instance" "deployQuarkusShop" {
   depends_on = [null_resource.docker_build]
 
   ami                         = "ami-08cf815cff6ee258a" # Amazon Linux ARM AMI built by Amazon Web Services
@@ -79,11 +74,11 @@ resource "aws_instance" "deployQuarkusPurchases" {
     db_username         = var.db_username
     db_name             = var.db_name
     db_password         = var.db_password
-    kafka_brokers       = join(" ", var.kafka_brokers)
+    kafka_brokers       = ""
   }))
   user_data_replace_on_change = true
   tags = {
-    Name = "terraform-deploy-QuarkusPurchases"
+    Name = "terraform-deploy-QuarkusShop"
   }
 }
 resource "aws_security_group" "instance" {
@@ -107,16 +102,16 @@ resource "aws_security_group" "instance" {
 variable "security_group_name" {
   description = "The name of the security group"
   type        = string
-  default     = "terraform-Quarkus-purchases"
+  default     = "terraform-Quarkus-shop"
 }
 
 resource "null_resource" "docker_build" {
   provisioner "local-exec" {
-    command = "docker login -u \"${var.docker_image_user}\" -p \"${var.docker_image_create_token}\" && cd ../microservices/Purchase && ./mvnw clean package -Dquarkus.container-image.group=${var.docker_image_user} -Dquarkus.docker.buildx.platform=linux/arm64,linux/amd64 -Dquarkus.container-image.push=true"
+    command = "docker login -u \"${var.docker_image_user}\" -p \"${var.docker_image_create_token}\" && cd ../microservices/shop && ./mvnw clean package -Dquarkus.container-image.group=${var.docker_image_user} -Dquarkus.docker.buildx.platform=linux/arm64,linux/amd64 -Dquarkus.container-image.push=true"
   }
 }
 
-output "purchasesAddress" {
-  value       = aws_instance.deployQuarkusPurchases.public_dns
+output "shopAddress" {
+  value       = aws_instance.deployQuarkusShop.public_dns
   description = "Address of the Quarkus EC2 machine"
 }
