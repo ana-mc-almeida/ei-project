@@ -37,7 +37,7 @@ public class Customer {
 
 		@Override
 		public String toString() {
-			return "{FiscalNumber:" + FiscalNumber + ", id:" + id + ", address:" + address + "postalCode:" + postalCode + ", name:" + name
+			return "{FiscalNumber:" + FiscalNumber + ", id:" + id + ", address:" + address + ", postalCode:" + postalCode + ", name:" + name
 					+ "}\n";
 		}
 
