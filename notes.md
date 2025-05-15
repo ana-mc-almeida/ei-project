@@ -7,6 +7,7 @@
   - [Database](#database)
 - [Questions](#questions)
   - [Selled Product Topics](#selled-product-topics)
+- [Notas para o relatório](#notas-para-o-relatório)
 
 </details>
 
@@ -58,92 +59,40 @@
 
 ## Questions
 
-- [ ] Loyalty Card decommission
+- [x] Loyalty Card decommission
   - Desassociar só de uma loja ou de todas?
+    - Fazer dois endpoints diferentes
   - ID | IdClient | IdsShops
   - int | int | string JSON
+    - Dupla chave - multiplas linhas
   - Como fazer com os pontos? Aqui ou no client?
+    - Não há pontos
 - [ ] CRUD para tudo faz sentido?
 - [ ] O que é que se manda para o topic de selled product?
 - [ ] Discount Coupon analysis using Artificial Intelligence
   - Para quê que é usada a IA se é só uma análise quantitativa?
   - Não seria para emitir um cupão?
-- [ ] Ligação DiscountCoupon e Purchase
+  - Problemas para depois - camunda
+- [x] Ligação DiscountCoupon e Purchase
   - Existe? Tem de existir por causa do Discount Coupon Analysis
   - Pode-se aplicar mais do que um cupão na mesma compra?
-
-- [ ] cross selling recommendation
+    - Criar tabela auxiliar
+    - Cada cupão pode ter mais do que uma purchase
+    - Cada purchase só pode ter um cupão
+- [x] Cross selling recommendation
   - só duas lojas ou podem ser mais?
-- [ ] LocationType não pode ser tabela externa para não ter dependencias entre microserviços
+    - mais do que duas lojas
+- [x] LocationType não pode ser tabela externa para não ter dependencias entre microserviços
+  - Fazer duas colunas
+  - Só fazer analises no postal code
 
 ### Selled Product Topics
 
-SelledProduct
-- location=lisboa .....
-- locarion=faro .....
-- customer=123 .....
+- Sempre que há uma purchase, recebe um REST
+- Escreve na db com todas as informações - selled product
+- Para cada uma das informações, escrever no topic correspondente
 
-```json
-{
-    search: 'SelledProductByCustomer',
-    customerId: 123,
-    dateOfAnalysis: '2023-10-01',
-    numberOfResults: 10,
-    results: [
-        {
-            id: 1,
-            data: '2023-10-01',
-            price: 10.0,
-            product: 'Product A',
-            supplier: 'Supplier A',
-            shop: 'Shop A',
-            loyaltyCard: 'Loyalty Card A'
-        },
-        {
-            id: 2,
-            data: '2023-10-02',
-            price: 20.0,
-            product: 'Product B',
-            supplier: 'Supplier B',
-            shop: 'Shop B',
-            loyaltyCard: 'Loyalty Card B'
-        }
-    ]
-},
-{
-    search: 'SelledProductByCoupon',
-    couponId: 123,
-    dateOfAnalysis: '2023-10-01',
-    numberOfResults: 10,
-    results: [
-        {
-            id: 1,
-            data: '2023-10-01',
-            price: 10.0,
-            product: 'Product A',
-            supplier: 'Supplier A',
-            shop: 'Shop A',
-            loyaltyCard: 'Loyalty Card A'
-        },
-        {
-            id: 2,
-            data: '2023-10-02',
-            price: 20.0,
-            product: 'Product B',
-            supplier: 'Supplier B',
-            shop: 'Shop B',
-            loyaltyCard: 'Loyalty Card B'
-        }
-    ]
-},
-{
-    search: 'SelledProductByLocation',
-    location: 'Lisboa',
-    numberOfResults: 10,
-},
-{
-    search: 'SelledProductByLocation',
-    location: 'Faro',
-    numberOfResults: 5,
-}
-```
+## Notas para o relatório
+
+- [ ] Porque é que optamos por fazer a localização como estamos a fazer
+- [ ] Supplier e product só como string
