@@ -29,7 +29,7 @@ public class DiscountCupon {
 
 	@Override
 	public String toString() {
-		return "{id=" + id + ", idLoyaltyCard=" + idLoyaltyCard + ", idsShops=" + idsShops + ", discount=" + discount
+		return "{id=" + id + ", idLoyaltyCard=" + idLoyaltyCard + ", idsShops=" + (idsShops != null ? java.util.Arrays.toString(idsShops) : "null")  + ", discount=" + discount
 				+ ", expirationDate=" + expirationDate + "}";
 	}
 

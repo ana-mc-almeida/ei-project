@@ -99,6 +99,7 @@
 - [ ] Supplier e product só como string
 - [ ] Cada purchase só pode ter no máximo um cupão
 - [ ] Dizer que não faz sentido ter update para o discount coupon
+- [ ] Pusemos ShopName nos topics ao invés de IDs porque é o que tem no enunciado
 
 
 - [ ] Ver se não é preciso fazer a cena para garantir que sempre que se apaga uma loja, é preciso apagar todos os registos dela
