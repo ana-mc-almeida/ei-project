@@ -30,12 +30,11 @@ public class LoyaltycardResource {
     
     private void initdb() {
         // In a production environment this configuration SHOULD NOT be used
-        client.query("DROP TABLE IF EXISTS LoyaltyCards").execute()
-        .flatMap(r -> client.query("CREATE TABLE LoyaltyCards (id SERIAL PRIMARY KEY, idCustomer BIGINT UNSIGNED, idShop BIGINT UNSIGNED, CONSTRAINT UC_Loyal UNIQUE (idCustomer,idShop))").execute())
-        .flatMap(r -> client.query(" INSERT INTO LoyaltyCards (idCustomer,idShop) VALUES (1,1)").execute())
-        .flatMap(r -> client.query(" INSERT INTO LoyaltyCards (idCustomer,idShop) VALUES (2,1)").execute())
-        .flatMap(r -> client.query(" INSERT INTO LoyaltyCards (idCustomer,idShop) VALUES (1,3)").execute())
-        .flatMap(r -> client.query(" INSERT INTO LoyaltyCards (idCustomer,idShop) VALUES (4,2)").execute())
+        client.query("CREATE TABLE IF NOT EXISTS LoyaltyCards (id BIGINT UNSIGNED NOT NULL, idCustomer BIGINT UNSIGNED NOT NULL, idShop BIGINT UNSIGNED NOT NULL, PRIMARY KEY(idCustomer, idShop))").execute()
+        .flatMap(r -> client.query(" INSERT INTO LoyaltyCards (id,idCustomer,idShop) VALUES (1,1,1)").execute())
+        .flatMap(r -> client.query(" INSERT INTO LoyaltyCards (id,idCustomer,idShop) VALUES (1,1,2)").execute())
+        .flatMap(r -> client.query(" INSERT INTO LoyaltyCards (id,idCustomer,idShop) VALUES (2,2,1)").execute())
+        .flatMap(r -> client.query(" INSERT INTO LoyaltyCards (id,idCustomer,idShop) VALUES (2,2,2)").execute())
         .await().indefinitely();
     }
     
@@ -46,10 +45,8 @@ public class LoyaltycardResource {
     
     @GET
     @Path("{id}")
-    public Uni<Response> getSingle(Long id) {
-        return Loyaltycard.findById(client, id)
-                .onItem().transform(loyaltycard -> loyaltycard != null ? Response.ok(loyaltycard) : Response.status(Response.Status.NOT_FOUND)) 
-                .onItem().transform(ResponseBuilder::build); 
+    public Multi<Loyaltycard> getCard(Long id) {
+        return Loyaltycard.findById(client, id); 
     }
      
     @GET
@@ -63,6 +60,7 @@ public class LoyaltycardResource {
     @POST
     public Uni<Response> create(Loyaltycard loyaltycard) {
         return loyaltycard.save(client , loyaltycard.idCustomer , loyaltycard.idShop)
+                .onFailure().recoverWithItem(false)
                 .onItem().transform(id -> URI.create("/loyaltycard/" + id))
                 .onItem().transform(uri -> Response.created(uri).build());
     }
@@ -75,11 +73,11 @@ public class LoyaltycardResource {
                 .onItem().transform(status -> Response.status(status).build());
     }
 
-    @PUT
-    @Path("/{id}/{idCustomer}/{idShop}")
-    public Uni<Response> update(Long id , Long idCustomer , Long idShop ) {
-        return Loyaltycard.update(client, id, idCustomer , idShop )
-                .onItem().transform(updated -> updated ? Response.Status.NO_CONTENT : Response.Status.NOT_FOUND)
+    @DELETE
+    @Path("{idCustomer}/{idShop}")
+    public Uni<Response> deleteDual(Long idCustomer, Long idShop) {
+        return Loyaltycard.delete2(client, idCustomer, idShop)
+                .onItem().transform(deleted -> deleted ? Response.Status.NO_CONTENT : Response.Status.NOT_FOUND)
                 .onItem().transform(status -> Response.status(status).build());
     }
     
