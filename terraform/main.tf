@@ -8,7 +8,7 @@ terraform {
     }
 
       backend "s3" {
-        bucket = "terraform-ie-project-bucket"
+        bucket = "terraform-s3-2025-05-05"
         key = "terraform.tfstate"
         region = "us-east-1"
         shared_credentials_file = "../.aws/credentials"
@@ -176,4 +176,26 @@ module "loyaltycard" {
 
 output "loyaltyCardAddress" {
   value = module.loyaltycard.loyaltyCardAddress
+}
+
+module "discountCupon" {
+    source = "./modules/discount-cupon"
+    kafka_brokers = module.kafka-cluster.publicdnslist
+    rds_address = module.rds.address
+    rds_port = module.rds.port
+    db_username = var.db_username
+    db_password = var.db_password
+    db_name = var.db_name
+    docker_image_create_token = var.docker_image_create_token
+    docker_image_pull_token = var.docker_image_pull_token
+    docker_image_user = var.docker_image_user
+
+    depends_on = [  
+        module.kafka-cluster,
+        module.rds,
+    ]
+}
+
+output "discountCuponAddress" {
+  value = module.discountCupon.discountCuponAddress
 }
