@@ -222,3 +222,25 @@ module "crossSellingRecommendation" {
 output "CrossSellingRecommendationAddress" {
   value = module.crossSellingRecommendation.CrossSellingRecommendationAddress
 }
+
+module "selledProductRecommendation" {
+    source = "./modules/selled-product"
+    kafka_brokers = module.kafka-cluster.publicdnslist
+    rds_address = module.rds.address
+    rds_port = module.rds.port
+    db_username = var.db_username
+    db_password = var.db_password
+    db_name = var.db_name
+    docker_image_create_token = var.docker_image_create_token
+    docker_image_pull_token = var.docker_image_pull_token
+    docker_image_user = var.docker_image_user
+
+    depends_on = [  
+        module.kafka-cluster,
+        module.rds,
+    ]
+}
+
+output "selledProductAddress" {
+  value = module.selledProductRecommendation.selledProductAddress
+}

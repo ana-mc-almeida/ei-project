@@ -8,6 +8,7 @@
 - [Questions](#questions)
   - [Selled Product Topics](#selled-product-topics)
 - [Notas para o relatório](#notas-para-o-relatório)
+- [Ver com o Daniel](#ver-com-o-daniel)
 
 </details>
 
@@ -105,3 +106,7 @@
 - [ ] Ver se não é preciso fazer a cena para garantir que sempre que se apaga uma loja, é preciso apagar todos os registos dela
   - Exemplo: apagar loja -> apagar cupões e purchases
   - Acho que não faz sentido porque 1 microserviço não deve saber do outro e 2 deves querer manter os registos das purchases
+
+## Ver com o Daniel
+
+- [ ] Faz sentido ter um delete para os selled products?
