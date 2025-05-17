@@ -49,12 +49,6 @@ public class KafkaProvisioningResource {
                 "discountcouponid BIGINT UNSIGNED," +
                 "CONSTRAINT unique_purchase_all_columns UNIQUE (" +
                 "DateTime, Price, Product(200), Supplier(200), shopname(200), loyaltycardid, discountcouponid))").execute()
-                .flatMap(r -> client.query(
-                        "INSERT INTO Purchases (DateTime,Price,Product,Supplier,shopname,loyaltycardid,discountcouponid) VALUES ('2038-01-19 03:14:07','12.34','one product','supplier','arco cego',1, 5)")
-                        .execute())
-                .flatMap(r -> client.query(
-                        "INSERT INTO Purchases (DateTime,Price,Product,Supplier,shopname,loyaltycardid,discountcouponid) VALUES ('2038-01-19 03:14:07','12.34','one product','supplier','arco cego',1, NULL)")
-                        .execute())
                 .await().indefinitely();
     }
 
