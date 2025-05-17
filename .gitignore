@@ -41,7 +41,3 @@ override.tf.json
 *.pem
 
 *.terraform.*
-
-# Java
-**/.mvn/*
-**/target/*
