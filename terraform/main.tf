@@ -1,23 +1,23 @@
 terraform {
-    required_version = ">= 1.0.0, < 2.0.0"
-    required_providers {
-        aws = {
-            source = "hashicorp/aws"
-            version = "~> 4.0"
-        }
+  required_version = ">= 1.0.0, < 2.0.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
     }
+  }
 
-      backend "s3" {
-        bucket = "terraform-s3-2025-05-05"
-        key = "terraform.tfstate"
-        region = "us-east-1"
-        shared_credentials_file = "../.aws/credentials"
-    }
+  backend "s3" {
+    bucket                  = "terraform-s3-2025-05-05"
+    key                     = "terraform.tfstate"
+    region                  = "us-east-1"
+    shared_credentials_file = "../.aws/credentials"
+  }
 }
 
 provider "aws" {
-    region = "us-east-1"
-    shared_credentials_files = [ "../.aws/credentials" ]
+  region                   = "us-east-1"
+  shared_credentials_files = ["../.aws/credentials"]
 }
 
 variable "nBroker" {
@@ -65,19 +65,19 @@ variable "docker_image_create_token" {
 }
 
 module "kafka-cluster" {
-    source = "./modules/kafka-cluster"
-    nBroker = var.nBroker
+  source  = "./modules/kafka-cluster"
+  nBroker = var.nBroker
 }
 
 module "rds" {
-    source = "./modules/rds"
-    db_username = var.db_username
-    db_password = var.db_password
-    db_name = var.db_name
+  source      = "./modules/rds"
+  db_username = var.db_username
+  db_password = var.db_password
+  db_name     = var.db_name
 }
 
 module "ollama" {
-    source = "./modules/ollama"
+  source = "./modules/ollama"
 }
 
 output "kafka_ips" {
@@ -97,8 +97,30 @@ output "ollama_address" {
 }
 
 module "purchases" {
-    source = "./modules/purchases"
-    kafka_brokers = module.kafka-cluster.publicdnslist
+  source                    = "./modules/purchases"
+  kafka_brokers             = module.kafka-cluster.publicdnslist
+  rds_address               = module.rds.address
+  rds_port                  = module.rds.port
+  db_username               = var.db_username
+  db_password               = var.db_password
+  db_name                   = var.db_name
+  docker_image_create_token = var.docker_image_create_token
+  docker_image_pull_token   = var.docker_image_pull_token
+  docker_image_user         = var.docker_image_user
+
+  depends_on = [
+    module.kafka-cluster,
+    module.rds,
+  ]
+}
+
+output "purchasesAddress" {
+  value = module.purchases.purchasesAddress
+}
+
+
+module "customer" {
+    source = "./modules/customer"
     rds_address = module.rds.address
     rds_port = module.rds.port
     db_username = var.db_username
@@ -109,75 +131,53 @@ module "purchases" {
     docker_image_user = var.docker_image_user
 
     depends_on = [  
-        module.kafka-cluster,
         module.rds,
     ]
 }
 
-output "purchasesAddress" {
-  value = module.purchases.purchasesAddress
+output "customerAddress" {
+  value = module.customer.customerAddress
 }
 
+module "shop" {
+    source = "./modules/shop"
+    rds_address = module.rds.address
+    rds_port = module.rds.port
+    db_username = var.db_username
+    db_password = var.db_password
+    db_name = var.db_name
+    docker_image_create_token = var.docker_image_create_token
+    docker_image_pull_token = var.docker_image_pull_token
+    docker_image_user = var.docker_image_user
 
-# module "customer" {
-#     source = "./modules/customer"
-#     rds_address = module.rds.address
-#     rds_port = module.rds.port
-#     db_username = var.db_username
-#     db_password = var.db_password
-#     db_name = var.db_name
-#     docker_image_create_token = var.docker_image_create_token
-#     docker_image_pull_token = var.docker_image_pull_token
-#     docker_image_user = var.docker_image_user
+    depends_on = [  
+        module.rds,
+    ]
+}
 
-#     depends_on = [  
-#         module.rds,
-#     ]
-# }
+output "shopAddress" {
+  value = module.shop.shopAddress
+}
 
-# output "customerAddress" {
-#   value = module.customer.customerAddress
-# }
+module "loyaltycard" {
+  source                    = "./modules/loyaltycard"
+  rds_address               = module.rds.address
+  rds_port                  = module.rds.port
+  db_username               = var.db_username
+  db_password               = var.db_password
+  db_name                   = var.db_name
+  docker_image_create_token = var.docker_image_create_token
+  docker_image_pull_token   = var.docker_image_pull_token
+  docker_image_user         = var.docker_image_user
 
-# module "shop" {
-#     source = "./modules/shop"
-#     rds_address = module.rds.address
-#     rds_port = module.rds.port
-#     db_username = var.db_username
-#     db_password = var.db_password
-#     db_name = var.db_name
-#     docker_image_create_token = var.docker_image_create_token
-#     docker_image_pull_token = var.docker_image_pull_token
-#     docker_image_user = var.docker_image_user
+  depends_on = [
+    module.rds,
+  ]
+}
 
-#     depends_on = [  
-#         module.rds,
-#     ]
-# }
-
-# output "shopAddress" {
-#   value = module.shop.shopAddress
-# }
-
-# module "loyaltycard" {
-#     source = "./modules/loyaltycard"
-#     rds_address = module.rds.address
-#     rds_port = module.rds.port
-#     db_username = var.db_username
-#     db_password = var.db_password
-#     db_name = var.db_name
-#     docker_image_create_token = var.docker_image_create_token
-#     docker_image_pull_token = var.docker_image_pull_token
-#     docker_image_user = var.docker_image_user
-
-#     depends_on = [  
-#         module.rds,
-#     ]
-# }
-
-# output "loyaltyCardAddress" {
-#   value = module.loyaltycard.loyaltyCardAddress
-# }
+output "loyaltyCardAddress" {
+  value = module.loyaltycard.loyaltyCardAddress
+}
 
 module "discountCupon" {
     source = "./modules/discount-cupon"
@@ -223,24 +223,24 @@ output "CrossSellingRecommendationAddress" {
   value = module.crossSellingRecommendation.CrossSellingRecommendationAddress
 }
 
-module "selledProductRecommendation" {
-    source = "./modules/selled-product"
-    kafka_brokers = module.kafka-cluster.publicdnslist
-    rds_address = module.rds.address
-    rds_port = module.rds.port
-    db_username = var.db_username
-    db_password = var.db_password
-    db_name = var.db_name
-    docker_image_create_token = var.docker_image_create_token
-    docker_image_pull_token = var.docker_image_pull_token
-    docker_image_user = var.docker_image_user
+module "selledProduct" {
+  source                    = "./modules/selled-product"
+  kafka_brokers             = module.kafka-cluster.publicdnslist
+  rds_address               = module.rds.address
+  rds_port                  = module.rds.port
+  db_username               = var.db_username
+  db_password               = var.db_password
+  db_name                   = var.db_name
+  docker_image_create_token = var.docker_image_create_token
+  docker_image_pull_token   = var.docker_image_pull_token
+  docker_image_user         = var.docker_image_user
 
-    depends_on = [  
-        module.kafka-cluster,
-        module.rds,
-    ]
+  depends_on = [
+    module.kafka-cluster,
+    module.rds,
+  ]
 }
 
 output "selledProductAddress" {
-  value = module.selledProductRecommendation.selledProductAddress
+  value = module.selledProduct.selledProductAddress
 }

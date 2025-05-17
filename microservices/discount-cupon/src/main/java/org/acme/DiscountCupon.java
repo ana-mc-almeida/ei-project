@@ -30,7 +30,8 @@ public class DiscountCupon {
 
 	@Override
 	public String toString() {
-		return "{id=" + id + ", idLoyaltyCard=" + idLoyaltyCard + ", idsShops=" + (idsShops != null ? java.util.Arrays.toString(idsShops) : "null")  + ", discount=" + discount
+		return "{id=" + id + ", idLoyaltyCard=" + idLoyaltyCard + ", idsShops="
+				+ (idsShops != null ? java.util.Arrays.toString(idsShops) : "null") + ", discount=" + discount
 				+ ", expirationDate=" + expirationDate + "}";
 	}
 
@@ -67,33 +68,31 @@ public class DiscountCupon {
 	}
 
 	public Uni<Long> save(MySQLPool client, Long idLoyaltyCard, Long[] idsShops, int discount,
-        java.time.LocalDateTime expirationDate) {
-    return client.preparedQuery(
-            "INSERT INTO DiscountCupon(idLoyaltyCard, discount, expirationDate) VALUES (?,?,?)")
-            .execute(Tuple.of(idLoyaltyCard, discount, expirationDate))
-            .onItem().transformToUni(pgRowSet -> {
-                if (pgRowSet.rowCount() == 1) {
-                    Long discountCuponId = pgRowSet.property(MySQLClient.LAST_INSERTED_ID);
-                    return Multi.createFrom().items(idsShops)
-                            .onItem().transformToUniAndMerge(idShop -> client.preparedQuery(
-                                    "INSERT INTO DiscountCuponShops(idDiscountCupon, idShop) VALUES (?, ?)")
-                                    .execute(Tuple.of(discountCuponId, idShop)))
-                            .collect().asList()
-                            .onItem().transform(insertResults -> discountCuponId);
-                } else {
-                    return Uni.createFrom().item(null);
-                }
-            });
-}
+			java.time.LocalDateTime expirationDate) {
+		return client.preparedQuery(
+				"INSERT INTO DiscountCupon(idLoyaltyCard, discount, expirationDate) VALUES (?,?,?)")
+				.execute(Tuple.of(idLoyaltyCard, discount, expirationDate))
+				.onItem().transformToUni(pgRowSet -> {
+					if (pgRowSet.rowCount() == 1) {
+						Long discountCuponId = pgRowSet.property(MySQLClient.LAST_INSERTED_ID);
+						return Multi.createFrom().items(idsShops)
+								.onItem().transformToUniAndMerge(idShop -> client.preparedQuery(
+										"INSERT INTO DiscountCuponShops(idDiscountCupon, idShop) VALUES (?, ?)")
+										.execute(Tuple.of(discountCuponId, idShop)))
+								.collect().asList()
+								.onItem().transform(insertResults -> discountCuponId);
+					} else {
+						return Uni.createFrom().item(null);
+					}
+				});
+	}
 
 	public static Uni<Boolean> delete(MySQLPool client, Long id_R) {
-		System.out.println("Deleting DiscountCupon with id: " + id_R);
 		return client.preparedQuery("DELETE FROM DiscountCuponShops WHERE idDiscountCupon = ?")
 				.execute(Tuple.of(id_R))
 				.flatMap(ignore -> client.preparedQuery("DELETE FROM DiscountCupon WHERE id = ?")
-					.execute(Tuple.of(id_R))
-					.onItem().transform(pgRowSet -> pgRowSet.rowCount() == 1)
-				)
+						.execute(Tuple.of(id_R))
+						.onItem().transform(pgRowSet -> pgRowSet.rowCount() == 1))
 				.onFailure().recoverWithItem(false);
 	}
 

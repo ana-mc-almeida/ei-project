@@ -14,18 +14,17 @@ import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
 
-
 @Path("DiscountCupon")
 public class DiscountCuponResource {
 
     @Inject
     io.vertx.mutiny.mysqlclient.MySQLPool client;
-    
-    @Inject
-    @ConfigProperty(name = "myapp.schema.create", defaultValue = "true") 
-    boolean schemaCreate ;
 
-    @ConfigProperty(name = "kafka.bootstrap.servers") 
+    @Inject
+    @ConfigProperty(name = "myapp.schema.create", defaultValue = "true")
+    boolean schemaCreate;
+
+    @ConfigProperty(name = "kafka.bootstrap.servers")
     String kafka_servers;
 
     @Channel("discountCupon")
@@ -37,33 +36,38 @@ public class DiscountCuponResource {
         }
     }
 
-    
     private void initdb() {
-            client.query("CREATE TABLE IF NOT EXISTS DiscountCupon (id SERIAL PRIMARY KEY, idLoyaltyCard BIGINT UNSIGNED, expirationDate DATETIME, discount INT)").execute()
-            .flatMap(r -> client.query("CREATE TABLE IF NOT EXISTS DiscountCuponShops (idDiscountCupon BIGINT UNSIGNED, idShop BIGINT UNSIGNED, PRIMARY KEY (idDiscountCupon, idShop))").execute())
-            .await().indefinitely();
+        client.query(
+                "CREATE TABLE IF NOT EXISTS DiscountCupon (id SERIAL PRIMARY KEY, idLoyaltyCard BIGINT UNSIGNED, expirationDate DATETIME, discount INT)")
+                .execute()
+                .flatMap(r -> client.query(
+                        "CREATE TABLE IF NOT EXISTS DiscountCuponShops (idDiscountCupon BIGINT UNSIGNED, idShop BIGINT UNSIGNED, PRIMARY KEY (idDiscountCupon, idShop))")
+                        .execute())
+                .await().indefinitely();
     }
 
-    
     @GET
     public Multi<DiscountCupon> get() {
-            return DiscountCupon.findAll(client);
-        }
-    
+        return DiscountCupon.findAll(client);
+    }
+
     @GET
     @Path("{id}")
     public Uni<Response> getSingle(Long id) {
         return DiscountCupon.findById(client, id)
-        .onItem().transform(discountCupon -> discountCupon != null ? Response.ok(discountCupon) : Response.status(Response.Status.NOT_FOUND)) 
+                .onItem()
+                .transform(discountCupon -> discountCupon != null ? Response.ok(discountCupon)
+                        : Response.status(Response.Status.NOT_FOUND))
                 .onItem().transform(ResponseBuilder::build);
     }
-     
+
     @POST
     public Uni<Response> create(DiscountCupon discountCupon) {
         return discountCupon
-                .save(client, discountCupon.idLoyaltyCard, discountCupon.idsShops, discountCupon.discount, discountCupon.expirationDate)
+                .save(client, discountCupon.idLoyaltyCard, discountCupon.idsShops, discountCupon.discount,
+                        discountCupon.expirationDate)
                 .onItem().transform(id -> {
-                    String message = "{id=" + id +", idLoyaltyCard=" + discountCupon.idLoyaltyCard + ", idsShops="
+                    String message = "{id=" + id + ", idLoyaltyCard=" + discountCupon.idLoyaltyCard + ", idsShops="
                             + (discountCupon.idsShops != null
                                     ? java.util.Arrays.toString(discountCupon.idsShops)
                                     : "null")
@@ -72,14 +76,15 @@ public class DiscountCuponResource {
                     emitter.send(message)
                             .whenComplete((success, failure) -> {
                                 if (failure != null) {
-                                    System.err.println("Failed to send message to Kafka DiscountCupon Topic: " + failure.getMessage());
+                                    System.err.println("Failed to send message to Kafka DiscountCupon Topic: "
+                                            + failure.getMessage());
                                 }
                             });
                     return URI.create("/discountCupon/" + id);
                 })
                 .onItem().transform(uri -> Response.created(uri).build());
     }
-    
+
     @DELETE
     @Path("{id}")
     public Uni<Response> delete(Long id) {

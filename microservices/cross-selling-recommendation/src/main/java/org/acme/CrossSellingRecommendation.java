@@ -25,7 +25,8 @@ public class CrossSellingRecommendation {
 
 	@Override
 	public String toString() {
-		return "{id=" + id + ", idLoyaltyCard=" + idLoyaltyCard + ", idsShops=" + (idsShops != null ? java.util.Arrays.toString(idsShops) : "null") + "}";
+		return "{id=" + id + ", idLoyaltyCard=" + idLoyaltyCard + ", idsShops="
+				+ (idsShops != null ? java.util.Arrays.toString(idsShops) : "null") + "}";
 	}
 
 	private static CrossSellingRecommendation from(Row row) {
@@ -33,14 +34,13 @@ public class CrossSellingRecommendation {
 		Long[] idsShops = row.getString("idsShops") != null
 				? java.util.Arrays.stream(row.getString("idsShops").split(","))
 						.map(Long::valueOf)
-						.toArray(Long[]::new) // Convert to array of Long
+						.toArray(Long[]::new)
 				: new Long[0];
 
 		return new CrossSellingRecommendation(
 				row.getLong("id"),
 				row.getLong("idLoyaltyCard"),
-				idsShops
-				);
+				idsShops);
 	}
 
 	public static Multi<CrossSellingRecommendation> findAll(MySQLPool client) {
@@ -67,11 +67,11 @@ public class CrossSellingRecommendation {
 					if (pgRowSet.rowCount() == 1) {
 						Long idCrossSellingRecommendation = pgRowSet.property(MySQLClient.LAST_INSERTED_ID);
 						return Multi.createFrom().items(idsShops)
-                            .onItem().transformToUniAndMerge(idShop -> client.preparedQuery(
-                                    "INSERT INTO CrossSellingRecommendationShops(idCrossSellingRecommendation, idShop) VALUES (?, ?)")
-                                    .execute(Tuple.of(idCrossSellingRecommendation, idShop)))
-                            .collect().asList()
-                            .onItem().transform(insertResults -> idCrossSellingRecommendation);
+								.onItem().transformToUniAndMerge(idShop -> client.preparedQuery(
+										"INSERT INTO CrossSellingRecommendationShops(idCrossSellingRecommendation, idShop) VALUES (?, ?)")
+										.execute(Tuple.of(idCrossSellingRecommendation, idShop)))
+								.collect().asList()
+								.onItem().transform(insertResults -> idCrossSellingRecommendation);
 					} else {
 						return Uni.createFrom().item(null);
 					}
@@ -79,17 +79,13 @@ public class CrossSellingRecommendation {
 	}
 
 	public static Uni<Boolean> delete(MySQLPool client, Long id_R) {
-		return client.preparedQuery("DELETE FROM CrossSellingRecommendationShops WHERE idCrossSellingRecommendation = ?")
+		return client
+				.preparedQuery("DELETE FROM CrossSellingRecommendationShops WHERE idCrossSellingRecommendation = ?")
 				.execute(Tuple.of(id_R))
-				.onItem().transform(pgRowSet -> pgRowSet.rowCount() == 1)
-				.onItem().transformToUni(deleted -> {
-					if (deleted) {
-						return client.preparedQuery("DELETE FROM CrossSellingRecommendation WHERE id = ?")
-								.execute(Tuple.of(id_R))
-								.onItem().transform(pgRowSet -> pgRowSet.rowCount() == 1);
-					} else {
-						return Uni.createFrom().item(false);
-					}
-				});
+				.flatMap(ignore -> client.preparedQuery("DELETE FROM CrossSellingRecommendation WHERE id = ?")
+						.execute(Tuple.of(id_R))
+						.onItem().transform(pgRowSet -> pgRowSet.rowCount() == 1))
+				.onFailure().recoverWithItem(false);
 	}
+
 }

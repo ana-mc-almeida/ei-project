@@ -54,9 +54,9 @@ public class Loyaltycard {
 	}
 
 	public Uni<Boolean> save(MySQLPool client, Long idCustomer_R, Long idShop_R) {
-		// First check if the customer already has a card
-		return client.preparedQuery("INSERT INTO LoyaltyCards(id,idCustomer,idShop) VALUES (?,?,?)").execute(Tuple.of(idCustomer_R ,idCustomer_R , idShop_R))
-	        		.onItem().transform(pgRowSet -> pgRowSet.rowCount() == 1 ); 
+		return client.preparedQuery("INSERT INTO LoyaltyCards(id,idCustomer,idShop) VALUES (?,?,?)")
+				.execute(Tuple.of(idCustomer_R, idCustomer_R, idShop_R))
+				.onItem().transform(pgRowSet -> pgRowSet.rowCount() == 1);
 	}
 
 	public static Uni<Boolean> delete(MySQLPool client, Long id_R) {

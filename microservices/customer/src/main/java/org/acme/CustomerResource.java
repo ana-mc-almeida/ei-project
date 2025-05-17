@@ -17,43 +17,47 @@ public class CustomerResource {
 
     @Inject
     io.vertx.mutiny.mysqlclient.MySQLPool client;
-    
+
     @Inject
-    @ConfigProperty(name = "myapp.schema.create", defaultValue = "true") 
-    boolean schemaCreate ;
+    @ConfigProperty(name = "myapp.schema.create", defaultValue = "true")
+    boolean schemaCreate;
 
     void config(@Observes StartupEvent ev) {
         if (schemaCreate) {
             initdb();
         }
     }
-    
+
     private void initdb() {
         // In a production environment this configuration SHOULD NOT be used
-        client.query("CREATE TABLE IF NOT EXISTS Customers (id SERIAL PRIMARY KEY, name TEXT NOT NULL, FiscalNumber BIGINT UNSIGNED, address TEXT NOT NULL, postalCode TEXT NOT NULL)").execute()
-        .await().indefinitely();
+        client.query(
+                "CREATE TABLE IF NOT EXISTS Customers (id SERIAL PRIMARY KEY, name TEXT NOT NULL, FiscalNumber BIGINT UNSIGNED, address TEXT NOT NULL, postalCode TEXT NOT NULL)")
+                .execute()
+                .await().indefinitely();
     }
-    
+
     @GET
     public Multi<Customer> get() {
         return Customer.findAll(client);
     }
-    
+
     @GET
     @Path("{id}")
     public Uni<Response> getSingle(Long id) {
         return Customer.findById(client, id)
-                .onItem().transform(customer -> customer != null ? Response.ok(customer) : Response.status(Response.Status.NOT_FOUND)) 
-                .onItem().transform(ResponseBuilder::build); 
+                .onItem()
+                .transform(customer -> customer != null ? Response.ok(customer)
+                        : Response.status(Response.Status.NOT_FOUND))
+                .onItem().transform(ResponseBuilder::build);
     }
-     
+
     @POST
     public Uni<Response> create(Customer customer) {
-        return customer.save(client , customer.name , customer.FiscalNumber , customer.address , customer.postalCode)
+        return customer.save(client, customer.name, customer.FiscalNumber, customer.address, customer.postalCode)
                 .onItem().transform(id -> URI.create("/customer/" + id))
                 .onItem().transform(uri -> Response.created(uri).build());
     }
-    
+
     @DELETE
     @Path("{id}")
     public Uni<Response> delete(Long id) {
@@ -66,8 +70,8 @@ public class CustomerResource {
     @Path("/{id}")
     public Uni<Response> update(Long id, Customer customer) {
         return Customer.update(client, id, customer.name, customer.FiscalNumber, customer.address, customer.postalCode)
-            .onItem().transform(updated -> updated ? Response.Status.NO_CONTENT : Response.Status.NOT_FOUND)
-            .onItem().transform(status -> Response.status(status).build());
+                .onItem().transform(updated -> updated ? Response.Status.NO_CONTENT : Response.Status.NOT_FOUND)
+                .onItem().transform(status -> Response.status(status).build());
     }
-    
+
 }

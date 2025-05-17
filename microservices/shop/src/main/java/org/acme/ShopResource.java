@@ -17,43 +17,45 @@ public class ShopResource {
 
     @Inject
     io.vertx.mutiny.mysqlclient.MySQLPool client;
-    
+
     @Inject
-    @ConfigProperty(name = "myapp.schema.create", defaultValue = "true") 
-    boolean schemaCreate ;
+    @ConfigProperty(name = "myapp.schema.create", defaultValue = "true")
+    boolean schemaCreate;
 
     void config(@Observes StartupEvent ev) {
         if (schemaCreate) {
             initdb();
         }
     }
-    
+
     private void initdb() {
-        // In a production environment this configuration SHOULD NOT be used
-        client.query("CREATE TABLE IF NOT EXISTS Shops (id SERIAL PRIMARY KEY, name TEXT NOT NULL, address TEXT NOT NULL, postalCode TEXT NOT NULL)").execute()
-        .await().indefinitely();
+        client.query(
+                "CREATE TABLE IF NOT EXISTS Shops (id SERIAL PRIMARY KEY, name TEXT NOT NULL, address TEXT NOT NULL, postalCode TEXT NOT NULL)")
+                .execute()
+                .await().indefinitely();
     }
-    
+
     @GET
     public Multi<Shop> get() {
         return Shop.findAll(client);
     }
-    
+
     @GET
     @Path("{id}")
     public Uni<Response> getSingle(Long id) {
         return Shop.findById(client, id)
-                .onItem().transform(shop -> shop != null ? Response.ok(shop) : Response.status(Response.Status.NOT_FOUND)) 
-                .onItem().transform(ResponseBuilder::build); 
+                .onItem()
+                .transform(shop -> shop != null ? Response.ok(shop) : Response.status(Response.Status.NOT_FOUND))
+                .onItem().transform(ResponseBuilder::build);
     }
-     
+
     @POST
     public Uni<Response> create(Shop shop) {
-        return shop.save(client , shop.name , shop.address , shop.postalCode)
+        return shop.save(client, shop.name, shop.address, shop.postalCode)
                 .onItem().transform(id -> URI.create("/shop/" + id))
                 .onItem().transform(uri -> Response.created(uri).build());
     }
-    
+
     @DELETE
     @Path("{id}")
     public Uni<Response> delete(Long id) {
@@ -64,10 +66,10 @@ public class ShopResource {
 
     @PUT
     @Path("/{id}")
-    public Uni<Response> update(Long id , Shop shop) {
-        return Shop.update(client, id , shop.name , shop.address , shop.postalCode)
+    public Uni<Response> update(Long id, Shop shop) {
+        return Shop.update(client, id, shop.name, shop.address, shop.postalCode)
                 .onItem().transform(updated -> updated ? Response.Status.NO_CONTENT : Response.Status.NOT_FOUND)
                 .onItem().transform(status -> Response.status(status).build());
     }
-    
+
 }

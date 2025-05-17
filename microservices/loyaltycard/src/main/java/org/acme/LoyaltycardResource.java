@@ -17,54 +17,53 @@ public class LoyaltycardResource {
 
     @Inject
     io.vertx.mutiny.mysqlclient.MySQLPool client;
-    
+
     @Inject
-    @ConfigProperty(name = "myapp.schema.create", defaultValue = "true") 
-    boolean schemaCreate ;
+    @ConfigProperty(name = "myapp.schema.create", defaultValue = "true")
+    boolean schemaCreate;
 
     void config(@Observes StartupEvent ev) {
         if (schemaCreate) {
             initdb();
         }
     }
-    
+
     private void initdb() {
-        // In a production environment this configuration SHOULD NOT be used
-        client.query("CREATE TABLE IF NOT EXISTS LoyaltyCards (id BIGINT UNSIGNED NOT NULL, idCustomer BIGINT UNSIGNED NOT NULL, idShop BIGINT UNSIGNED NOT NULL, PRIMARY KEY(idCustomer, idShop))").execute()
-        .flatMap(r -> client.query(" INSERT INTO LoyaltyCards (id,idCustomer,idShop) VALUES (1,1,1)").execute())
-        .flatMap(r -> client.query(" INSERT INTO LoyaltyCards (id,idCustomer,idShop) VALUES (1,1,2)").execute())
-        .flatMap(r -> client.query(" INSERT INTO LoyaltyCards (id,idCustomer,idShop) VALUES (2,2,1)").execute())
-        .flatMap(r -> client.query(" INSERT INTO LoyaltyCards (id,idCustomer,idShop) VALUES (2,2,2)").execute())
-        .await().indefinitely();
+        client.query(
+                "CREATE TABLE IF NOT EXISTS LoyaltyCards (id BIGINT UNSIGNED NOT NULL, idCustomer BIGINT UNSIGNED NOT NULL, idShop BIGINT UNSIGNED NOT NULL, PRIMARY KEY(idCustomer, idShop))")
+                .execute()
+                .await().indefinitely();
     }
-    
+
     @GET
     public Multi<Loyaltycard> get() {
         return Loyaltycard.findAll(client);
     }
-    
+
     @GET
     @Path("{id}")
     public Multi<Loyaltycard> getCard(Long id) {
-        return Loyaltycard.findById(client, id); 
+        return Loyaltycard.findById(client, id);
     }
-     
+
     @GET
     @Path("{idCustomer}/{idShop}")
     public Uni<Response> getDual(Long idCustomer, Long idShop) {
         return Loyaltycard.findById2(client, idCustomer, idShop)
-                .onItem().transform(loyaltycard -> loyaltycard != null ? Response.ok(loyaltycard) : Response.status(Response.Status.NOT_FOUND)) 
-                .onItem().transform(ResponseBuilder::build); 
+                .onItem()
+                .transform(loyaltycard -> loyaltycard != null ? Response.ok(loyaltycard)
+                        : Response.status(Response.Status.NOT_FOUND))
+                .onItem().transform(ResponseBuilder::build);
     }
 
     @POST
     public Uni<Response> create(Loyaltycard loyaltycard) {
-        return loyaltycard.save(client , loyaltycard.idCustomer , loyaltycard.idShop)
+        return loyaltycard.save(client, loyaltycard.idCustomer, loyaltycard.idShop)
                 .onFailure().recoverWithItem(false)
                 .onItem().transform(id -> URI.create("/loyaltycard/" + id))
                 .onItem().transform(uri -> Response.created(uri).build());
     }
-    
+
     @DELETE
     @Path("{id}")
     public Uni<Response> delete(Long id) {
@@ -80,5 +79,5 @@ public class LoyaltycardResource {
                 .onItem().transform(deleted -> deleted ? Response.Status.NO_CONTENT : Response.Status.NOT_FOUND)
                 .onItem().transform(status -> Response.status(status).build());
     }
-    
+
 }

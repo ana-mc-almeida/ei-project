@@ -66,20 +66,20 @@ variable "module_name" {
 resource "aws_instance" "deployQuarkusSelledProduct" {
   depends_on = [null_resource.docker_build]
 
-  ami                         = "ami-08cf815cff6ee258a" # Amazon Linux ARM AMI built by Amazon Web Services
-  instance_type               = "t4g.nano"
-  vpc_security_group_ids      = [aws_security_group.instance.id]
-  key_name                    = "vockey"
+  ami                    = "ami-08cf815cff6ee258a" # Amazon Linux ARM AMI built by Amazon Web Services
+  instance_type          = "t4g.nano"
+  vpc_security_group_ids = [aws_security_group.instance.id]
+  key_name               = "vockey"
   user_data = base64encode(templatefile("${var.basePath}MicroservicesCreation.sh", {
-    module_name         = var.module_name
-    docker_username     = var.docker_image_user
-    docker_password     = var.docker_image_pull_token
-    rds_address         = var.rds_address
-    rds_port            = var.rds_port
-    db_username         = var.db_username
-    db_name             = var.db_name
-    db_password         = var.db_password
-    kafka_brokers       = join(" ", var.kafka_brokers)
+    module_name     = var.module_name
+    docker_username = var.docker_image_user
+    docker_password = var.docker_image_pull_token
+    rds_address     = var.rds_address
+    rds_port        = var.rds_port
+    db_username     = var.db_username
+    db_name         = var.db_name
+    db_password     = var.db_password
+    kafka_brokers   = join(" ", var.kafka_brokers)
   }))
   user_data_replace_on_change = true
   tags = {
