@@ -42,6 +42,9 @@ public class SelledProductResource {
     @Channel("selledProductByCoupon")
     Emitter<String> emitterCoupon;
 
+    @Channel("selledProductByProduct")
+    Emitter<String> emitterProduct;
+
     void config(@Observes StartupEvent ev) {
         if (schemaCreate) {
             initdb();
@@ -50,7 +53,7 @@ public class SelledProductResource {
 
     private void initdb() {
         client.query(
-                "CREATE TABLE IF NOT EXISTS SelledProduct (id SERIAL PRIMARY KEY, idLoyaltyCard BIGINT UNSIGNED, idCustomer BIGINT UNSIGNED, idDiscountCupon BIGINT UNSIGNED NULL, idShop BIGINT UNSIGNED, idPurchase BIGINT UNSIGNED, location VARCHAR(255))")
+                "CREATE TABLE IF NOT EXISTS SelledProduct (id SERIAL PRIMARY KEY, TypeOfAnalysis VARCHAR(50), typeValue VARCHAR(255), timestamp DATETIME, result DOUBLE)")
                 .execute()
                 .await().indefinitely();
     }
@@ -71,54 +74,43 @@ public class SelledProductResource {
                 .onItem().transform(ResponseBuilder::build);
     }
 
+    private Emitter<String> getEmitterForType(SelledProduct.TypeOfAnalysis typeOfAnalysis) {
+        switch (typeOfAnalysis) {
+            case LOYALTY_CARD:
+                return emitterLoyaltyCard;
+            case CUSTOMER:
+                return emitterCustomer;
+            case DISCOUNT_COUPON:
+                return emitterCoupon;
+            case SHOP:
+                return emitterShop;
+            case PRODUCT:
+                return emitterProduct;
+            case POSTAL_CODE:
+                return emitterLocation;
+            default:
+                throw new IllegalArgumentException("Unknown TypeOfAnalysis: " + typeOfAnalysis);
+        }
+    }
+
     @POST
     public Uni<Response> create(SelledProduct selledProduct) {
         return selledProduct
-                .save(client, selledProduct.idLoyaltyCard,
-                        selledProduct.idCustomer,
-                        selledProduct.idDiscountCupon,
-                        selledProduct.idShop,
-                        selledProduct.idPurchase,
-                        selledProduct.location)
+                .save(client, selledProduct.typeOfAnalysis, selledProduct.typeValue,
+                        selledProduct.timestamp, selledProduct.result)
                 .onItem().transform(id -> {
-                    String message = "{id="+id+", idLoyaltyCard:" + selledProduct.idLoyaltyCard
-                            + ", idCustomer:" + selledProduct.idCustomer
-                            + ", idDiscountCupon:" + selledProduct.idDiscountCupon
-                            + ", idShop:" + selledProduct.idShop
-                            + ", idPurchase:" + selledProduct.idPurchase
-                            + ", location:'" + selledProduct.location + "'}";
+                    String message = "{id=" + id + ", typeOfAnalysis=" + selledProduct.typeOfAnalysis + ", typeValue="
+                            + selledProduct.typeValue + ", timestamp=" + selledProduct.timestamp.toString()
+                            + ", result=" + selledProduct.result + "}";
 
-                    emitterLoyaltyCard.send(message).whenComplete((success, failure) -> {
-                        if (failure != null) {
-                            System.err.println(
-                                    "Failed to send message to Kafka - byLoyaltyCard: " + failure.getMessage());
-                        }
-                    });
-                    emitterShop.send(message).whenComplete((success, failure) -> {
-                        if (failure != null) {
-                            System.err.println(
-                                    "Failed to send message to Kafka - byShop: " + failure.getMessage());
-                        }
-                    });
-                    emitterLocation.send(message).whenComplete((success, failure) -> {
-                        if (failure != null) {
-                            System.err.println(
-                                    "Failed to send message to Kafka - byLocation: " + failure.getMessage());
-                        }
-                    });
-                    emitterCustomer.send(message).whenComplete((success, failure) -> {
-                        if (failure != null) {
-                            System.err.println(
-                                    "Failed to send message to Kafka - byCustomer: " + failure.getMessage());
-                        }
-                    });
-                    emitterCoupon.send(message).whenComplete((success, failure) -> {
-                        if (failure != null) {
-                            System.err.println(
-                                    "Failed to send message to Kafka - byCoupon: " + failure.getMessage());
-                        }
-                    });
-
+                    Emitter<String> emitter = getEmitterForType(selledProduct.typeOfAnalysis);
+                    emitter.send(message)
+                            .whenComplete((success, failure) -> {
+                                if (failure != null) {
+                                    System.err.println("Failed to send message to Kafka DiscountCupon Topic: "
+                                            + failure.getMessage());
+                                }
+                            });
                     return URI.create("/crossSellingRecommendation/" + id);
                 })
                 .onItem().transform(uri -> Response.created(uri).build());
