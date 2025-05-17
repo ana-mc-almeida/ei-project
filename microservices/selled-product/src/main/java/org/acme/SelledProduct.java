@@ -2,6 +2,7 @@ package org.acme;
 
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
+import io.vertx.mutiny.mysqlclient.MySQLClient;
 import io.vertx.mutiny.mysqlclient.MySQLPool;
 import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.RowSet;
@@ -44,7 +45,7 @@ public class SelledProduct {
 				row.getLong("id"),
 				row.getLong("idLoyaltyCard"),
 				row.getLong("idCustomer"),
-				row.getLong("idDiscountCupon"),
+				row.get(Long.class, "idDiscountCupon"),
 				row.getLong("idShop"),
 				row.getLong("idPurchase"),
 				row.getString("location"));
@@ -66,14 +67,21 @@ public class SelledProduct {
 				.onItem().transform(iterator -> iterator.hasNext() ? from(iterator.next()) : null);
 	}
 
-	public Uni<Boolean> save(MySQLPool client, Long idLoyaltyCard, Long idCustomer,
-			Long idDiscountCupon, Long idShop, Long idPurchase, String location) {
-		return client.preparedQuery(
-				"INSERT INTO SelledProduct (idLoyaltyCard, idCustomer, idDiscountCupon, idShop, idPurchase, location) VALUES (?, ?, ?, ?, ?, ?)")
-				.execute(Tuple.of(idLoyaltyCard, idCustomer, idDiscountCupon != null ? idDiscountCupon : null, idShop,
-						idPurchase, location))
-				.onItem().transform(pgRowSet -> pgRowSet.rowCount() == 1);
-	}
+	public Uni<Long> save(MySQLPool client, Long idLoyaltyCard, Long idCustomer,
+        Long idDiscountCupon, Long idShop, Long idPurchase, String location) {
+    return client.preparedQuery(
+            "INSERT INTO SelledProduct (idLoyaltyCard, idCustomer, idDiscountCupon, idShop, idPurchase, location) VALUES (?, ?, ?, ?, ?, ?)")
+            .execute(Tuple.of(idLoyaltyCard, idCustomer, idDiscountCupon != null ? idDiscountCupon : null, idShop,
+                    idPurchase, location))
+            .onItem().transformToUni(pgRowSet -> {
+                if (pgRowSet.rowCount() == 1) {
+                    Long selledProductId = pgRowSet.property(MySQLClient.LAST_INSERTED_ID);
+                    return Uni.createFrom().item(selledProductId);
+                } else {
+                    return Uni.createFrom().item(null);
+                }
+            });
+}
 
 	public static Uni<Boolean> delete(MySQLPool client, Long id_R) {
 		return client.preparedQuery("DELETE FROM SelledProduct WHERE id = ?").execute(Tuple.of(id_R))

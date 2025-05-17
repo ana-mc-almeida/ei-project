@@ -39,7 +39,7 @@ public class DiscountCupon {
 		Long[] idsShops = row.getString("idsShops") != null
 				? java.util.Arrays.stream(row.getString("idsShops").split(","))
 						.map(Long::valueOf)
-						.toArray(Long[]::new) // Convert to array of Long
+						.toArray(Long[]::new)
 				: new Long[0];
 
 		return new DiscountCupon(
@@ -60,7 +60,7 @@ public class DiscountCupon {
 
 	public static Uni<DiscountCupon> findById(MySQLPool client, Long id) {
 		return client.preparedQuery(
-				"SELECT dc.id, dc.idLoyaltyCard, dc.discount, dc.expirationDate, IFNULL(GROUP_CONCAT(dcs.idShop), '') AS idsShops  FROM DiscountCupon dc LEFT JOIN DiscountCuponShops dcs ON dc.id = dcs.idDiscountCupon GROUP BY dc.id WHERE dc.id = ?;")
+				"SELECT dc.id, dc.idLoyaltyCard, dc.discount, dc.expirationDate, IFNULL(GROUP_CONCAT(dcs.idShop), '') AS idsShops  FROM DiscountCupon dc LEFT JOIN DiscountCuponShops dcs ON dc.id = dcs.idDiscountCupon WHERE dc.id = ? GROUP BY dc.id;")
 				.execute(Tuple.of(id))
 				.onItem().transform(RowSet::iterator)
 				.onItem().transform(iterator -> iterator.hasNext() ? from(iterator.next()) : null);
@@ -87,17 +87,14 @@ public class DiscountCupon {
 }
 
 	public static Uni<Boolean> delete(MySQLPool client, Long id_R) {
+		System.out.println("Deleting DiscountCupon with id: " + id_R);
 		return client.preparedQuery("DELETE FROM DiscountCuponShops WHERE idDiscountCupon = ?")
 				.execute(Tuple.of(id_R))
-				.onItem().transform(pgRowSet -> pgRowSet.rowCount() == 1)
-				.onItem().transformToUni(deleted -> {
-					if (deleted) {
-						return client.preparedQuery("DELETE FROM DiscountCupon WHERE id = ?")
-								.execute(Tuple.of(id_R))
-								.onItem().transform(pgRowSet -> pgRowSet.rowCount() == 1);
-					} else {
-						return Uni.createFrom().item(false);
-					}
-				});
+				.flatMap(ignore -> client.preparedQuery("DELETE FROM DiscountCupon WHERE id = ?")
+					.execute(Tuple.of(id_R))
+					.onItem().transform(pgRowSet -> pgRowSet.rowCount() == 1)
+				)
+				.onFailure().recoverWithItem(false);
 	}
+
 }

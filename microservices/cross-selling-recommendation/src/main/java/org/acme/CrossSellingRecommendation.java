@@ -2,6 +2,7 @@ package org.acme;
 
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
+import io.vertx.mutiny.mysqlclient.MySQLClient;
 import io.vertx.mutiny.mysqlclient.MySQLPool;
 import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.RowSet;
@@ -52,7 +53,7 @@ public class CrossSellingRecommendation {
 
 	public static Uni<CrossSellingRecommendation> findById(MySQLPool client, Long id) {
 		return client.preparedQuery(
-				"SELECT dc.id, dc.idLoyaltyCard, IFNULL(GROUP_CONCAT(dcs.idShop), '') AS idsShops  FROM CrossSellingRecommendation dc LEFT JOIN CrossSellingRecommendationShops dcs ON dc.id = dcs.idCrossSellingRecommendation GROUP BY dc.id WHERE dc.id = ?;")
+				"SELECT dc.id, dc.idLoyaltyCard, IFNULL(GROUP_CONCAT(dcs.idShop), '') AS idsShops  FROM CrossSellingRecommendation dc LEFT JOIN CrossSellingRecommendationShops dcs ON dc.id = dcs.idCrossSellingRecommendation WHERE dc.id = ? GROUP BY dc.id;")
 				.execute(Tuple.of(id))
 				.onItem().transform(RowSet::iterator)
 				.onItem().transform(iterator -> iterator.hasNext() ? from(iterator.next()) : null);
@@ -64,15 +65,13 @@ public class CrossSellingRecommendation {
 				.execute(Tuple.of(idLoyaltyCard))
 				.onItem().transformToUni(pgRowSet -> {
 					if (pgRowSet.rowCount() == 1) {
-						return client.query("SELECT LAST_INSERT_ID() AS id") // This only works for MySQL
-								.execute()
-								.onItem().transform(rowSet -> rowSet.iterator().next().getLong("id"))
-								.onItem().transformToUni(idCrossSellingRecommendation -> Multi.createFrom().items(idsShops)
-										.onItem().transformToUniAndMerge(idShop -> client.preparedQuery(
-												"INSERT INTO CrossSellingRecommendationShops(idCrossSellingRecommendation, idShop) VALUES (?, ?)")
-												.execute(Tuple.of(idCrossSellingRecommendation, idShop)))
-										.collect().asList()
-										.onItem().transform(insertResults -> idCrossSellingRecommendation));
+						Long idCrossSellingRecommendation = pgRowSet.property(MySQLClient.LAST_INSERTED_ID);
+						return Multi.createFrom().items(idsShops)
+                            .onItem().transformToUniAndMerge(idShop -> client.preparedQuery(
+                                    "INSERT INTO CrossSellingRecommendationShops(idCrossSellingRecommendation, idShop) VALUES (?, ?)")
+                                    .execute(Tuple.of(idCrossSellingRecommendation, idShop)))
+                            .collect().asList()
+                            .onItem().transform(insertResults -> idCrossSellingRecommendation);
 					} else {
 						return Uni.createFrom().item(null);
 					}
