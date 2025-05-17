@@ -44,7 +44,7 @@ public class SelledProduct {
 				row.getLong("id"),
 				row.getLong("idLoyaltyCard"),
 				row.getLong("idCustomer"),
-				row.get(Long.class, "idDiscountCupon"),
+				row.getLong("idDiscountCupon"),
 				row.getLong("idShop"),
 				row.getLong("idPurchase"),
 				row.getString("location"));

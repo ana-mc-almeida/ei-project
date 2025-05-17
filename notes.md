@@ -109,4 +109,5 @@
 
 ## Ver com o Daniel
 
-- [ ] Faz sentido ter um delete para os selled products?
+- [x] Faz sentido ter um delete para os selled products?
+  - Mais vale a mais do que a menos

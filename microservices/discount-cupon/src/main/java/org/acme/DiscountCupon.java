@@ -2,6 +2,7 @@ package org.acme;
 
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
+import io.vertx.mutiny.mysqlclient.MySQLClient;
 import io.vertx.mutiny.mysqlclient.MySQLPool;
 import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.RowSet;
@@ -65,30 +66,26 @@ public class DiscountCupon {
 				.onItem().transform(iterator -> iterator.hasNext() ? from(iterator.next()) : null);
 	}
 
-	// tested and works
-	public Uni<Boolean> save(MySQLPool client, Long idLoyaltyCard, Long[] idsShops, int discount,
-			java.time.LocalDateTime expirationDate) {
-		return client.preparedQuery(
-				"INSERT INTO DiscountCupon(idLoyaltyCard, discount, expirationDate) VALUES (?,?,?)")
-				.execute(Tuple.of(idLoyaltyCard, discount, expirationDate))
-				.onItem().transformToUni(pgRowSet -> {
-					if (pgRowSet.rowCount() == 1) {
-						return client.query("SELECT LAST_INSERT_ID() AS id")
-								.execute()
-								.onItem().transform(rowSet -> rowSet.iterator().next().getLong("id"))
-								.onItem().transformToUni(discountCuponId -> Multi.createFrom().items(idsShops)
-										.onItem().transformToUniAndMerge(idShop -> client.preparedQuery(
-												"INSERT INTO DiscountCuponShops(idDiscountCupon, idShop) VALUES (?, ?)")
-												.execute(Tuple.of(discountCuponId, idShop)))
-										.collect().asList()
-										.onItem().transform(insertResults -> true));
-					} else {
-						return Uni.createFrom().item(false);
-					}
-				});
-	}
+	public Uni<Long> save(MySQLPool client, Long idLoyaltyCard, Long[] idsShops, int discount,
+        java.time.LocalDateTime expirationDate) {
+    return client.preparedQuery(
+            "INSERT INTO DiscountCupon(idLoyaltyCard, discount, expirationDate) VALUES (?,?,?)")
+            .execute(Tuple.of(idLoyaltyCard, discount, expirationDate))
+            .onItem().transformToUni(pgRowSet -> {
+                if (pgRowSet.rowCount() == 1) {
+                    Long discountCuponId = pgRowSet.property(MySQLClient.LAST_INSERTED_ID);
+                    return Multi.createFrom().items(idsShops)
+                            .onItem().transformToUniAndMerge(idShop -> client.preparedQuery(
+                                    "INSERT INTO DiscountCuponShops(idDiscountCupon, idShop) VALUES (?, ?)")
+                                    .execute(Tuple.of(discountCuponId, idShop)))
+                            .collect().asList()
+                            .onItem().transform(insertResults -> discountCuponId);
+                } else {
+                    return Uni.createFrom().item(null);
+                }
+            });
+}
 
-	// tested and works
 	public static Uni<Boolean> delete(MySQLPool client, Long id_R) {
 		return client.preparedQuery("DELETE FROM DiscountCuponShops WHERE idDiscountCupon = ?")
 				.execute(Tuple.of(id_R))

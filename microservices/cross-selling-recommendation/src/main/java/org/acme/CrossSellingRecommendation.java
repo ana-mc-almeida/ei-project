@@ -58,7 +58,7 @@ public class CrossSellingRecommendation {
 				.onItem().transform(iterator -> iterator.hasNext() ? from(iterator.next()) : null);
 	}
 
-	public Uni<Boolean> save(MySQLPool client, Long idLoyaltyCard, Long[] idsShops) {
+	public Uni<Long> save(MySQLPool client, Long idLoyaltyCard, Long[] idsShops) {
 		return client.preparedQuery(
 				"INSERT INTO CrossSellingRecommendation(idLoyaltyCard) VALUES (?)")
 				.execute(Tuple.of(idLoyaltyCard))
@@ -72,9 +72,9 @@ public class CrossSellingRecommendation {
 												"INSERT INTO CrossSellingRecommendationShops(idCrossSellingRecommendation, idShop) VALUES (?, ?)")
 												.execute(Tuple.of(idCrossSellingRecommendation, idShop)))
 										.collect().asList()
-										.onItem().transform(insertResults -> true));
+										.onItem().transform(insertResults -> idCrossSellingRecommendation));
 					} else {
-						return Uni.createFrom().item(false);
+						return Uni.createFrom().item(null);
 					}
 				});
 	}

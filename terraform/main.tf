@@ -119,65 +119,65 @@ output "purchasesAddress" {
 }
 
 
-module "customer" {
-    source = "./modules/customer"
-    rds_address = module.rds.address
-    rds_port = module.rds.port
-    db_username = var.db_username
-    db_password = var.db_password
-    db_name = var.db_name
-    docker_image_create_token = var.docker_image_create_token
-    docker_image_pull_token = var.docker_image_pull_token
-    docker_image_user = var.docker_image_user
+# module "customer" {
+#     source = "./modules/customer"
+#     rds_address = module.rds.address
+#     rds_port = module.rds.port
+#     db_username = var.db_username
+#     db_password = var.db_password
+#     db_name = var.db_name
+#     docker_image_create_token = var.docker_image_create_token
+#     docker_image_pull_token = var.docker_image_pull_token
+#     docker_image_user = var.docker_image_user
 
-    depends_on = [  
-        module.rds,
-    ]
-}
+#     depends_on = [  
+#         module.rds,
+#     ]
+# }
 
-output "customerAddress" {
-  value = module.customer.customerAddress
-}
+# output "customerAddress" {
+#   value = module.customer.customerAddress
+# }
 
-module "shop" {
-    source = "./modules/shop"
-    rds_address = module.rds.address
-    rds_port = module.rds.port
-    db_username = var.db_username
-    db_password = var.db_password
-    db_name = var.db_name
-    docker_image_create_token = var.docker_image_create_token
-    docker_image_pull_token = var.docker_image_pull_token
-    docker_image_user = var.docker_image_user
+# module "shop" {
+#     source = "./modules/shop"
+#     rds_address = module.rds.address
+#     rds_port = module.rds.port
+#     db_username = var.db_username
+#     db_password = var.db_password
+#     db_name = var.db_name
+#     docker_image_create_token = var.docker_image_create_token
+#     docker_image_pull_token = var.docker_image_pull_token
+#     docker_image_user = var.docker_image_user
 
-    depends_on = [  
-        module.rds,
-    ]
-}
+#     depends_on = [  
+#         module.rds,
+#     ]
+# }
 
-output "shopAddress" {
-  value = module.shop.shopAddress
-}
+# output "shopAddress" {
+#   value = module.shop.shopAddress
+# }
 
-module "loyaltycard" {
-    source = "./modules/loyaltycard"
-    rds_address = module.rds.address
-    rds_port = module.rds.port
-    db_username = var.db_username
-    db_password = var.db_password
-    db_name = var.db_name
-    docker_image_create_token = var.docker_image_create_token
-    docker_image_pull_token = var.docker_image_pull_token
-    docker_image_user = var.docker_image_user
+# module "loyaltycard" {
+#     source = "./modules/loyaltycard"
+#     rds_address = module.rds.address
+#     rds_port = module.rds.port
+#     db_username = var.db_username
+#     db_password = var.db_password
+#     db_name = var.db_name
+#     docker_image_create_token = var.docker_image_create_token
+#     docker_image_pull_token = var.docker_image_pull_token
+#     docker_image_user = var.docker_image_user
 
-    depends_on = [  
-        module.rds,
-    ]
-}
+#     depends_on = [  
+#         module.rds,
+#     ]
+# }
 
-output "loyaltyCardAddress" {
-  value = module.loyaltycard.loyaltyCardAddress
-}
+# output "loyaltyCardAddress" {
+#   value = module.loyaltycard.loyaltyCardAddress
+# }
 
 module "discountCupon" {
     source = "./modules/discount-cupon"

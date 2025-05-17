@@ -50,7 +50,7 @@ public class SelledProductResource {
 
     private void initdb() {
         client.query(
-                "CREATE TABLE IF NOT EXISTS SelledProduct (id INT AUTO_INCREMENT PRIMARY KEY, idLoyaltyCard INT, idCustomer INT, idDiscountCupon INT NULL, idShop INT, idPurchase INT, location VARCHAR(255))")
+                "CREATE TABLE IF NOT EXISTS SelledProduct (id SERIAL PRIMARY KEY, idLoyaltyCard BIGINT UNSIGNED, idCustomer BIGINT UNSIGNED, idDiscountCupon BIGINT UNSIGNED NULL, idShop BIGINT UNSIGNED, idPurchase BIGINT UNSIGNED, location VARCHAR(255))")
                 .execute()
                 .await().indefinitely();
     }
@@ -81,7 +81,7 @@ public class SelledProductResource {
                         selledProduct.idPurchase,
                         selledProduct.location)
                 .onItem().transform(id -> {
-                    String message = "{idLoyaltyCard:" + selledProduct.idLoyaltyCard
+                    String message = "{id="+id+", idLoyaltyCard:" + selledProduct.idLoyaltyCard
                             + ", idCustomer:" + selledProduct.idCustomer
                             + ", idDiscountCupon:" + selledProduct.idDiscountCupon
                             + ", idShop:" + selledProduct.idShop

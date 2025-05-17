@@ -38,15 +38,11 @@ public class CrossSellingRecommendationResource {
 
     private void initdb() {
         client.query(
-                "CREATE TABLE IF NOT EXISTS CrossSellingRecommendation (id INT AUTO_INCREMENT PRIMARY KEY, idLoyaltyCard INT)")
+                "CREATE TABLE IF NOT EXISTS CrossSellingRecommendation (id SERIAL PRIMARY KEY, idLoyaltyCard BIGINT UNSIGNED)")
                 .execute()
-                .await().indefinitely();
-
-        // TODO: only create CrossSellingRecommendationShops after the first
-        // CrossSellingRecommendation is created
-        client.query(
-                "CREATE TABLE IF NOT EXISTS CrossSellingRecommendationShops (idCrossSellingRecommendation INT, idShop INT, PRIMARY KEY (idCrossSellingRecommendation, idShop))")
-                .execute()
+                .flatMap(r -> client.query(
+                        "CREATE TABLE IF NOT EXISTS CrossSellingRecommendationShops (idCrossSellingRecommendation BIGINT UNSIGNED, idShop BIGINT UNSIGNED, PRIMARY KEY (idCrossSellingRecommendation, idShop))")
+                        .execute())
                 .await().indefinitely();
     }
 
@@ -71,12 +67,13 @@ public class CrossSellingRecommendationResource {
         return crossSellingRecommendation
                 .save(client, crossSellingRecommendation.idLoyaltyCard, crossSellingRecommendation.idsShops)
                 .onItem().transform(id -> {
-                    String message = "{idLoyaltyCard=" + crossSellingRecommendation.idLoyaltyCard + ", idsShops="
+                    String message = "{id=" + id + ", idLoyaltyCard=" + crossSellingRecommendation.idLoyaltyCard
+                            + ", idsShops="
                             + (crossSellingRecommendation.idsShops != null
                                     ? java.util.Arrays.toString(crossSellingRecommendation.idsShops)
                                     : "null")
                             + "}";
-                            emitter.send(message)
+                    emitter.send(message)
                             .whenComplete((success, failure) -> {
                                 if (failure != null) {
                                     System.err.println("Failed to send message to Kafka: " + failure.getMessage());

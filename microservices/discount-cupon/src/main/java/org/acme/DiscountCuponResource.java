@@ -14,8 +14,6 @@ import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
 
-import org.acme.model.Topic;
-
 
 @Path("DiscountCupon")
 public class DiscountCuponResource {
@@ -41,13 +39,8 @@ public class DiscountCuponResource {
 
     
     private void initdb() {
-        client.query("CREATE TABLE IF NOT EXISTS DiscountCupon (id INT AUTO_INCREMENT PRIMARY KEY, idLoyaltyCard INT, expirationDate DATETIME, discount INT)")
-        .execute()
-        .await().indefinitely();
-        
-        // TODO: only create DiscountCuponShops after the first DiscountCupon is created
-        client.query("CREATE TABLE IF NOT EXISTS DiscountCuponShops (idDiscountCupon INT, idShop INT, PRIMARY KEY (idDiscountCupon, idShop))")
-            .execute()
+            client.query("CREATE TABLE IF NOT EXISTS DiscountCupon (id SERIAL PRIMARY KEY, idLoyaltyCard BIGINT UNSIGNED, expirationDate DATETIME, discount INT)").execute()
+            .flatMap(r -> client.query("CREATE TABLE IF NOT EXISTS DiscountCuponShops (idDiscountCupon BIGINT UNSIGNED, idShop BIGINT UNSIGNED, PRIMARY KEY (idDiscountCupon, idShop))").execute())
             .await().indefinitely();
     }
 
@@ -67,17 +60,24 @@ public class DiscountCuponResource {
      
     @POST
     public Uni<Response> create(DiscountCupon discountCupon) {
-        Uni<Response> result = discountCupon.save(client , discountCupon.idLoyaltyCard, discountCupon.idsShops,  discountCupon.discount,discountCupon.expirationDate)
-        .onItem().transform(id -> URI.create("/discountCupon/" + id))
-        .onItem().transform(uri -> Response.created(uri).build());
-
-        if(result != null) {
-            String message =  "{idLoyaltyCard=" + discountCupon.idLoyaltyCard + ", idsShops=" + (discountCupon.idsShops != null ? java.util.Arrays.toString(discountCupon.idsShops) : "null")  + ", discount=" + discountCupon.discount
-            + ", expirationDate=" + discountCupon.expirationDate + "}";
-            emitter.send(message);
-        }
-
-        return result;
+        return discountCupon
+                .save(client, discountCupon.idLoyaltyCard, discountCupon.idsShops, discountCupon.discount, discountCupon.expirationDate)
+                .onItem().transform(id -> {
+                    String message = "{id=" + id +", idLoyaltyCard=" + discountCupon.idLoyaltyCard + ", idsShops="
+                            + (discountCupon.idsShops != null
+                                    ? java.util.Arrays.toString(discountCupon.idsShops)
+                                    : "null")
+                            + ", discount=" + discountCupon.discount
+                            + ", expirationDate=" + discountCupon.expirationDate + "}";
+                    emitter.send(message)
+                            .whenComplete((success, failure) -> {
+                                if (failure != null) {
+                                    System.err.println("Failed to send message to Kafka DiscountCupon Topic: " + failure.getMessage());
+                                }
+                            });
+                    return URI.create("/discountCupon/" + id);
+                })
+                .onItem().transform(uri -> Response.created(uri).build());
     }
     
     @DELETE
