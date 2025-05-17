@@ -14,8 +14,8 @@ import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
 
-@Path("DiscountCupon")
-public class DiscountCuponResource {
+@Path("DiscountCoupon")
+public class DiscountCouponResource {
 
     @Inject
     io.vertx.mutiny.mysqlclient.MySQLPool client;
@@ -27,7 +27,7 @@ public class DiscountCuponResource {
     @ConfigProperty(name = "kafka.bootstrap.servers")
     String kafka_servers;
 
-    @Channel("discountCupon")
+    @Channel("discountCoupon")
     Emitter<String> emitter;
 
     void config(@Observes StartupEvent ev) {
@@ -38,49 +38,49 @@ public class DiscountCuponResource {
 
     private void initdb() {
         client.query(
-                "CREATE TABLE IF NOT EXISTS DiscountCupon (id SERIAL PRIMARY KEY, idLoyaltyCard BIGINT UNSIGNED, expirationDate DATETIME, discount INT)")
+                "CREATE TABLE IF NOT EXISTS DiscountCoupon (id SERIAL PRIMARY KEY, idLoyaltyCard BIGINT UNSIGNED, expirationDate DATETIME, discount INT)")
                 .execute()
                 .flatMap(r -> client.query(
-                        "CREATE TABLE IF NOT EXISTS DiscountCuponShops (idDiscountCupon BIGINT UNSIGNED, idShop BIGINT UNSIGNED, PRIMARY KEY (idDiscountCupon, idShop))")
+                        "CREATE TABLE IF NOT EXISTS DiscountCouponShops (idDiscountCoupon BIGINT UNSIGNED, idShop BIGINT UNSIGNED, PRIMARY KEY (idDiscountCoupon, idShop))")
                         .execute())
                 .await().indefinitely();
     }
 
     @GET
-    public Multi<DiscountCupon> get() {
-        return DiscountCupon.findAll(client);
+    public Multi<DiscountCoupon> get() {
+        return DiscountCoupon.findAll(client);
     }
 
     @GET
     @Path("{id}")
     public Uni<Response> getSingle(Long id) {
-        return DiscountCupon.findById(client, id)
+        return DiscountCoupon.findById(client, id)
                 .onItem()
-                .transform(discountCupon -> discountCupon != null ? Response.ok(discountCupon)
+                .transform(discountCoupon -> discountCoupon != null ? Response.ok(discountCoupon)
                         : Response.status(Response.Status.NOT_FOUND))
                 .onItem().transform(ResponseBuilder::build);
     }
 
     @POST
-    public Uni<Response> create(DiscountCupon discountCupon) {
-        return discountCupon
-                .save(client, discountCupon.idLoyaltyCard, discountCupon.idsShops, discountCupon.discount,
-                        discountCupon.expirationDate)
+    public Uni<Response> create(DiscountCoupon discountCoupon) {
+        return discountCoupon
+                .save(client, discountCoupon.idLoyaltyCard, discountCoupon.idsShops, discountCoupon.discount,
+                        discountCoupon.expirationDate)
                 .onItem().transform(id -> {
-                    String message = "{id=" + id + ", idLoyaltyCard=" + discountCupon.idLoyaltyCard + ", idsShops="
-                            + (discountCupon.idsShops != null
-                                    ? java.util.Arrays.toString(discountCupon.idsShops)
+                    String message = "{id=" + id + ", idLoyaltyCard=" + discountCoupon.idLoyaltyCard + ", idsShops="
+                            + (discountCoupon.idsShops != null
+                                    ? java.util.Arrays.toString(discountCoupon.idsShops)
                                     : "null")
-                            + ", discount=" + discountCupon.discount
-                            + ", expirationDate=" + discountCupon.expirationDate + "}";
+                            + ", discount=" + discountCoupon.discount
+                            + ", expirationDate=" + discountCoupon.expirationDate + "}";
                     emitter.send(message)
                             .whenComplete((success, failure) -> {
                                 if (failure != null) {
-                                    System.err.println("Failed to send message to Kafka DiscountCupon Topic: "
+                                    System.err.println("Failed to send message to Kafka DiscountCoupon Topic: "
                                             + failure.getMessage());
                                 }
                             });
-                    return URI.create("/discountCupon/" + id);
+                    return URI.create("/discountCoupon/" + id);
                 })
                 .onItem().transform(uri -> Response.created(uri).build());
     }
@@ -88,7 +88,7 @@ public class DiscountCuponResource {
     @DELETE
     @Path("{id}")
     public Uni<Response> delete(Long id) {
-        return DiscountCupon.delete(client, id)
+        return DiscountCoupon.delete(client, id)
                 .onItem().transform(deleted -> deleted ? Response.Status.NO_CONTENT : Response.Status.NOT_FOUND)
                 .onItem().transform(status -> Response.status(status).build());
     }

@@ -9,6 +9,7 @@
   - [Selled Product Topics](#selled-product-topics)
 - [Notas para o relatório](#notas-para-o-relatório)
 - [Ver com o Daniel](#ver-com-o-daniel)
+- [TODO](#todo)
 
 </details>
 
@@ -33,7 +34,7 @@
 - [ ] Loyalty Card
   - CRUD
   - ID | IdClient | IdsShops
-- [ ] Discount Cupon
+- [ ] Discount Coupon
   - Create
   - Find by
   - Update (?) -> faz sentido se tivermos info de se foi usado
@@ -111,3 +112,9 @@
 
 - [x] Faz sentido ter um delete para os selled products?
   - Mais vale a mais do que a menos
+
+## TODO
+
+- [ ] Mudar de coupon para coupon
+- [ ] Alterar ids de resposta dos endpoints
+- [ ] Colocar a data de emissão do cupão

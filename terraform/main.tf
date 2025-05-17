@@ -179,8 +179,8 @@ output "loyaltyCardAddress" {
   value = module.loyaltycard.loyaltyCardAddress
 }
 
-module "discountCupon" {
-    source = "./modules/discount-cupon"
+module "discountCoupon" {
+    source = "./modules/discount-coupon"
     kafka_brokers = module.kafka-cluster.publicdnslist
     rds_address = module.rds.address
     rds_port = module.rds.port
@@ -197,8 +197,8 @@ module "discountCupon" {
     ]
 }
 
-output "discountCuponAddress" {
-  value = module.discountCupon.discountCuponAddress
+output "discountCouponAddress" {
+  value = module.discountCoupon.discountCouponAddress
 }
 
 module "crossSellingRecommendation" {

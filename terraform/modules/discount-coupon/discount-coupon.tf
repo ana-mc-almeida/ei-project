@@ -60,10 +60,10 @@ variable "basePath" {
 variable "module_name" {
   description = "Name of the module"
   type        = string
-  default     = "discount-cupon"
+  default     = "discount-coupon"
 }
 
-resource "aws_instance" "deployQuarkusDiscountCupon" {
+resource "aws_instance" "deployQuarkusDiscountCoupon" {
   depends_on = [null_resource.docker_build]
 
   ami                    = "ami-08cf815cff6ee258a" # Amazon Linux ARM AMI built by Amazon Web Services
@@ -83,7 +83,7 @@ resource "aws_instance" "deployQuarkusDiscountCupon" {
   }))
   user_data_replace_on_change = true
   tags = {
-    Name = "terraform-deploy-QuarkusDiscountCupon"
+    Name = "terraform-deploy-QuarkusDiscountCoupon"
   }
 }
 resource "aws_security_group" "instance" {
@@ -107,7 +107,7 @@ resource "aws_security_group" "instance" {
 variable "security_group_name" {
   description = "The name of the security group"
   type        = string
-  default     = "terraform-Quarkus-discount-cupon"
+  default     = "terraform-Quarkus-discount-coupon"
 }
 
 resource "null_resource" "docker_build" {
@@ -116,7 +116,7 @@ resource "null_resource" "docker_build" {
   }
 }
 
-output "discountCuponAddress" {
-  value       = aws_instance.deployQuarkusDiscountCupon.public_dns
+output "discountCouponAddress" {
+  value       = aws_instance.deployQuarkusDiscountCoupon.public_dns
   description = "Address of the Quarkus EC2 machine"
 }

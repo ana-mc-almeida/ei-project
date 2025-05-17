@@ -107,7 +107,7 @@ public class SelledProductResource {
                     emitter.send(message)
                             .whenComplete((success, failure) -> {
                                 if (failure != null) {
-                                    System.err.println("Failed to send message to Kafka DiscountCupon Topic: "
+                                    System.err.println("Failed to send message to Kafka DiscountCoupon Topic: "
                                             + failure.getMessage());
                                 }
                             });
