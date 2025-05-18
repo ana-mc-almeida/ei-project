@@ -79,7 +79,7 @@ variable "security_group_name" {
 }
 
 resource "null_resource" "kafkaClusterSetup" {
-  count      = length(aws_instance.kafkaBroker)
+  count = length(aws_instance.kafkaBroker)
 
   connection {
     type        = "ssh"
