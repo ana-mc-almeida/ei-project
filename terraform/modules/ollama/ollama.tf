@@ -6,7 +6,7 @@ variable "basePath" {
 
 resource "aws_instance" "ollamaConfiguration" {
   ami                    = "ami-0889a44b331db0194"
-  instance_type          = "t2.medium"
+  instance_type          = "t2.large"
   count                  = 1
   vpc_security_group_ids = [aws_security_group.instance.id]
   root_block_device {
