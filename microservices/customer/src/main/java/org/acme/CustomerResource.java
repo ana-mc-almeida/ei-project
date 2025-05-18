@@ -54,8 +54,13 @@ public class CustomerResource {
     @POST
     public Uni<Response> create(Customer customer) {
         return customer.save(client, customer.name, customer.FiscalNumber, customer.address, customer.postalCode)
-                .onItem().transform(id -> URI.create("/customer/" + id))
-                .onItem().transform(uri -> Response.created(uri).build());
+                .onItem().transform(id -> {
+                    if (id == null) {
+                        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                                .entity("Failed to create Customer").build();
+                    }
+                    return Response.created(URI.create("/customer/" + id)).build();
+                });
     }
 
     @DELETE

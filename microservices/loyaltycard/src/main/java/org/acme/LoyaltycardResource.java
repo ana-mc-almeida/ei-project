@@ -59,9 +59,13 @@ public class LoyaltycardResource {
     @POST
     public Uni<Response> create(Loyaltycard loyaltycard) {
         return loyaltycard.save(client, loyaltycard.idCustomer, loyaltycard.idShop)
-                .onFailure().recoverWithItem(false)
-                .onItem().transform(id -> URI.create("/loyaltycard/" + id))
-                .onItem().transform(uri -> Response.created(uri).build());
+                .onItem().transform(id -> {
+                    if (id == null) {
+                        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                                .entity("Failed to create Loyaltycard").build();
+                    }
+                    return Response.created(URI.create("/loyaltycard/" + id)).build();
+                });
     }
 
     @DELETE

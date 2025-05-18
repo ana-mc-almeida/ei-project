@@ -1,6 +1,6 @@
 #!/bin/bash
 
-API_URL='http://ec2-44-193-226-242.compute-1.amazonaws.com:8080/Customer'
+API_URL='http://ec2-54-237-188-57.compute-1.amazonaws.com:8080/Customer'
 
 # Step 1: Check if the list is empty
 response=$(curl -s -X GET "$API_URL" -H 'accept: application/json')

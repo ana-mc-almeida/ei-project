@@ -2,6 +2,7 @@ package org.acme;
 
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
+import io.vertx.mutiny.mysqlclient.MySQLClient;
 import io.vertx.mutiny.mysqlclient.MySQLPool;
 import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.RowSet;
@@ -56,10 +57,16 @@ public class Shop {
 				.onItem().transform(iterator -> iterator.hasNext() ? from(iterator.next()) : null);
 	}
 
-	public Uni<Boolean> save(MySQLPool client, String name_R, String address_R, String postalCode_R) {
+	public Uni<Long> save(MySQLPool client, String name_R, String address_R, String postalCode_R) {
 		return client.preparedQuery("INSERT INTO Shops(name,address,postalCode) VALUES (?,?,?)")
 				.execute(Tuple.of(name_R, address_R, postalCode_R))
-				.onItem().transform(pgRowSet -> pgRowSet.rowCount() == 1);
+				.onItem().transform(pgRowSet -> {
+					if (pgRowSet.rowCount() == 1) {
+						return pgRowSet.property(MySQLClient.LAST_INSERTED_ID);
+					} else {
+						return null;
+					}
+				});
 	}
 
 	public static Uni<Boolean> delete(MySQLPool client, Long id_R) {

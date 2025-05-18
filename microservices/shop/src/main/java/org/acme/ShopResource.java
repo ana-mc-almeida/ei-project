@@ -52,8 +52,13 @@ public class ShopResource {
     @POST
     public Uni<Response> create(Shop shop) {
         return shop.save(client, shop.name, shop.address, shop.postalCode)
-                .onItem().transform(id -> URI.create("/shop/" + id))
-                .onItem().transform(uri -> Response.created(uri).build());
+                .onItem().transform(id -> {
+                    if (id == null) {
+                        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                                .entity("Failed to create Shop").build();
+                    }
+                    return Response.created(URI.create("/shop/" + id)).build();
+                });
     }
 
     @DELETE
