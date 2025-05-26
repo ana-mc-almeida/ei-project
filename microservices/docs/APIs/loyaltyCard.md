@@ -1,3 +1,131 @@
-# loyaltyCard API Documentation
+# Loyalty Card API Documentation <!-- omit in toc -->
 
-TODO
+This documentation provides details on how to interact with the Loyalty Card API endpoints.
+
+<details>
+<summary>Table Of Contents</summary>
+
+- [GET /LoyaltyCard](#get-loyaltycard)
+- [GET /LoyaltyCard/{id}](#get-loyaltycardid)
+- [GET /LoyaltyCard/{idCustomer}/{idShop}](#get-loyaltycardidcustomeridshop)
+- [POST /LoyaltyCard](#post-loyaltycard)
+- [DELETE /LoyaltyCard/{id}](#delete-loyaltycardid)
+- [DELETE /LoyaltyCard/{idCustomer}/{idShop}](#delete-loyaltycardidcustomeridshop)
+
+</details>
+
+## GET /LoyaltyCard
+
+Retrieves a list of all loyalty cards.
+
+<details>
+<summary>Curl Example</summary>
+
+```bash
+curl -X 'GET' \
+  'http://ec2-44-222-220-109.compute-1.amazonaws.com:8080/Loyaltycard' \
+  -H 'accept: application/json'
+```
+
+> In this example, the EC2 instance is accessed via its public DNS name `ec2-44-222-220-109.compute-1.amazonaws.com` on port `8080`. Replace the public DNS with your actual instance address if different.
+
+</details>
+
+## GET /LoyaltyCard/{id}
+
+Retrieves a specific loyalty card by its unique ID.
+
+<details>
+<summary>Curl Example</summary>
+
+```bash
+curl -X 'GET' \
+  'http://ec2-44-222-220-109.compute-1.amazonaws.com:8080/Loyaltycard/{id}' \
+  -H 'accept: application/json'
+```
+
+> In this example, the EC2 instance is accessed via its public DNS name `ec2-44-222-220-109.compute-1.amazonaws.com` on port `8080`. Replace the public DNS with your actual instance address if different.
+
+</details>
+
+## GET /LoyaltyCard/{idCustomer}/{idShop}
+
+Retrieves a loyalty card by customer ID and shop ID.
+
+<details>
+<summary>Curl Example</summary>
+
+```bash
+curl -X 'GET' \
+  'http://ec2-44-222-220-109.compute-1.amazonaws.com:8080/Loyaltycard/{idCustomer}/{idShop}' \
+  -H 'accept: application/json'
+```
+
+> In this example, the EC2 instance is accessed via its public DNS name `ec2-44-222-220-109.compute-1.amazonaws.com` on port `8080`. Replace the public DNS with your actual instance address if different.
+
+</details>
+
+## POST /LoyaltyCard
+
+Creates a new loyalty card linking a customer to a shop.
+
+Must include a body like this:
+
+```json
+{
+  "idCustomer": <integer>,
+  "idShop": <integer>
+}
+```
+
+<details>
+<summary>Curl Example</summary>
+
+```bash
+curl -X 'POST' \
+  'http://ec2-44-222-220-109.compute-1.amazonaws.com:8080/Loyaltycard' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "idCustomer": 1,
+    "idShop": 1
+}'
+```
+
+> In this example, the EC2 instance is accessed via its public DNS name `ec2-44-222-220-109.compute-1.amazonaws.com` on port `8080`. Replace the public DNS with your actual instance address if different.
+
+</details>
+
+## DELETE /LoyaltyCard/{id}
+
+Deletes a loyalty card by its unique ID.
+
+<details>
+<summary>Curl Example</summary>
+
+```bash
+curl -X 'DELETE' \
+  'http://ec2-44-222-220-109.compute-1.amazonaws.com:8080/Loyaltycard/{id}' \
+  -H 'accept: application/json'
+```
+
+> In this example, the EC2 instance is accessed via its public DNS name `ec2-44-222-220-109.compute-1.amazonaws.com` on port `8080`. Replace the public DNS with your actual instance address if different.
+
+</details>
+
+## DELETE /LoyaltyCard/{idCustomer}/{idShop}
+
+Deletes a loyalty card based on customer and shop IDs.
+
+<details>
+<summary>Curl Example</summary>
+
+```bash
+curl -X 'DELETE' \
+  'http://ec2-44-222-220-109.compute-1.amazonaws.com:8080/Loyaltycard/{idCustomer}/{idShop}' \
+  -H 'accept: application/json'
+```
+
+> In this example, the EC2 instance is accessed via its public DNS name `ec2-44-222-220-109.compute-1.amazonaws.com` on port `8080`. Replace the public DNS with your actual instance address if different.
+
+</details>
