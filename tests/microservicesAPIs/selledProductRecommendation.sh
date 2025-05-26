@@ -10,7 +10,7 @@ echo "GET all selled products: $response"
 # Step 2: Create a new selled product
 post_data='{
   "typeOfAnalysis": "CUSTOMER",
-  "typeValue": "CUSTOMER",
+  "typeValue": "1",
   "timestamp": "2022-03-10T12:15:50",
   "result": 10
 }'
