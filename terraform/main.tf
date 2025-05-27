@@ -159,3 +159,33 @@ module "discountCoupon-crossSellingRecommendation" {
 output "discountCoupon-crossSellingRecommendationAddress" {
   value = module.discountCoupon-crossSellingRecommendation.discountCoupon-crossSellingRecommendationAddress
 }
+
+module "Kong" {
+    source = "./modules/kong"
+    ollama_address = module.ollama.address[0]
+    purchases_customer_address = module.purchases-customers.purchases-customerAddress
+    discount_coupons_cross_selling_address = module.discountCoupon-crossSellingRecommendation.discountCoupon-crossSellingRecommendationAddress
+    shop_loyaltycard_selled_products_address = module.shop-loyaltycard-selledProduct.shop-loyaltycard-selledProductAddress
+    depends_on = [  
+        module.discountCoupon-crossSellingRecommendation,
+        module.shop-loyaltycard-selledProduct,
+        module.purchases-customers,
+        module.ollama,
+    ]
+}
+
+output "KongAddress" {
+  value = module.Kong.KongAddress
+}
+
+module "Camunda" {
+    source = "./modules/camunda"
+    kong_address = module.Kong.KongAddress
+    depends_on = [  
+      module.Kong,
+    ]
+}
+
+output "CamundaAddress" {
+  value = module.Camunda.CamundaAddress
+}
