@@ -177,3 +177,15 @@ module "Kong" {
 output "KongAddress" {
   value = module.Kong.KongAddress
 }
+
+module "Camunda" {
+    source = "./modules/camunda"
+    kong_address = module.Kong.KongAddress
+    depends_on = [  
+      module.Kong,
+    ]
+}
+
+output "CamundaAddress" {
+  value = module.Camunda.CamundaAddress
+}
