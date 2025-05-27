@@ -16,6 +16,8 @@ Check out the [project statement](project-statement.pdf) for more details.
 └── destroy_project.sh      # Script to tear down infrastructure
 ```
 
+Check the documentation for the microservices in the [microservices/docs](microservices/docs) directory and the tests in the [tests/docs](tests/docs/) directory.
+
 ## Run the project
 
 See [`running.md`](running.md) for detailed instructions on how to run this project.
