@@ -56,18 +56,23 @@ variable "basePath" {
   type        = string
   default     = "modules/"
 }
+
 variable "module_name" {
   description = "Name of the module"
   type        = string
-  default     = "cross-selling-recommendation"
+  default     = "selled-product"
 }
 
-resource "aws_instance" "deployQuarkusCrossSellingRecommendation" {
+resource "aws_instance" "deployQuarkusSelledProductOllama" {
   depends_on = [null_resource.docker_build]
 
-  ami                    = "ami-08cf815cff6ee258a" # Amazon Linux ARM AMI built by Amazon Web Services
-  instance_type          = "t4g.nano"
+  ami                    = "ami-0889a44b331db0194"
+  instance_type          = "t2.large"
   vpc_security_group_ids = [aws_security_group.instance.id]
+  root_block_device {
+    volume_size = 24 # In Gb
+  }
+  count                  = 1
   key_name               = "vockey"
   user_data = base64encode(templatefile("${var.basePath}MicroservicesCreation.sh", {
     module_name     = var.module_name
@@ -82,7 +87,7 @@ resource "aws_instance" "deployQuarkusCrossSellingRecommendation" {
   }))
   user_data_replace_on_change = true
   tags = {
-    Name = "terraform-deploy-QuarkusCrossSellingRecommendation"
+    Name = "terraform-deploy-QuarkusSelledProductOllama"
   }
 }
 resource "aws_security_group" "instance" {
@@ -106,7 +111,7 @@ resource "aws_security_group" "instance" {
 variable "security_group_name" {
   description = "The name of the security group"
   type        = string
-  default     = "terraform-Quarkus-cross-selling-recommendation"
+  default     = "terraform-Quarkus-selled-product-ollama"
 }
 
 resource "null_resource" "docker_build" {
@@ -115,7 +120,7 @@ resource "null_resource" "docker_build" {
   }
 }
 
-output "CrossSellingRecommendationAddress" {
-  value       = aws_instance.deployQuarkusCrossSellingRecommendation.public_dns
+output "selledProduct-ollamaAddress" {
+  value       = aws_instance.deployQuarkusSelledProductOllama[*].public_dns
   description = "Address of the Quarkus EC2 machine"
 }

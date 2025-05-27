@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Replace with your actual EC2 DNS name
-EC2_DNS="ec2-34-207-107-73.compute-1.amazonaws.com"
+EC2_DNS="ec2-3-86-6-23.compute-1.amazonaws.com"
 API_URL="http://$EC2_DNS:11434/api/generate"
 
 # Send request

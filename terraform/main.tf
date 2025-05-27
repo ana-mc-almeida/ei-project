@@ -8,7 +8,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket                  = "terraform-s3-2025-05-05"
+    bucket                  = "terraform-ie-project-bucket"
     key                     = "terraform.tfstate"
     region                  = "us-east-1"
     shared_credentials_files = ["../.aws/credentials"]
@@ -96,8 +96,8 @@ output "ollama_address" {
   value = module.ollama.address
 }
 
-module "purchases" {
-  source                    = "./modules/purchases"
+module "purchases-customers" {
+  source                    = "./modules/purchases-customer"
   kafka_brokers             = module.kafka-cluster.publicdnslist
   rds_address               = module.rds.address
   rds_port                  = module.rds.port
@@ -114,73 +114,12 @@ module "purchases" {
   ]
 }
 
-output "purchasesAddress" {
-  value = module.purchases.purchasesAddress
+output "purchases-customerAddress" {
+  value = module.purchases-customers.purchases-customerAddress
 }
 
-
-module "customer" {
-    source = "./modules/customer"
-    rds_address = module.rds.address
-    rds_port = module.rds.port
-    db_username = var.db_username
-    db_password = var.db_password
-    db_name = var.db_name
-    docker_image_create_token = var.docker_image_create_token
-    docker_image_pull_token = var.docker_image_pull_token
-    docker_image_user = var.docker_image_user
-
-    depends_on = [  
-        module.rds,
-    ]
-}
-
-output "customerAddress" {
-  value = module.customer.customerAddress
-}
-
-module "shop" {
-    source = "./modules/shop"
-    rds_address = module.rds.address
-    rds_port = module.rds.port
-    db_username = var.db_username
-    db_password = var.db_password
-    db_name = var.db_name
-    docker_image_create_token = var.docker_image_create_token
-    docker_image_pull_token = var.docker_image_pull_token
-    docker_image_user = var.docker_image_user
-
-    depends_on = [  
-        module.rds,
-    ]
-}
-
-output "shopAddress" {
-  value = module.shop.shopAddress
-}
-
-module "loyaltycard" {
-  source                    = "./modules/loyaltycard"
-  rds_address               = module.rds.address
-  rds_port                  = module.rds.port
-  db_username               = var.db_username
-  db_password               = var.db_password
-  db_name                   = var.db_name
-  docker_image_create_token = var.docker_image_create_token
-  docker_image_pull_token   = var.docker_image_pull_token
-  docker_image_user         = var.docker_image_user
-
-  depends_on = [
-    module.rds,
-  ]
-}
-
-output "loyaltyCardAddress" {
-  value = module.loyaltycard.loyaltyCardAddress
-}
-
-module "discountCoupon" {
-    source = "./modules/discount-coupon"
+module "shop-loyaltycard-selledProduct" {
+    source = "./modules/shop-loyaltycard-selled-product"
     kafka_brokers = module.kafka-cluster.publicdnslist
     rds_address = module.rds.address
     rds_port = module.rds.port
@@ -190,19 +129,18 @@ module "discountCoupon" {
     docker_image_create_token = var.docker_image_create_token
     docker_image_pull_token = var.docker_image_pull_token
     docker_image_user = var.docker_image_user
-
     depends_on = [  
-        module.kafka-cluster,
         module.rds,
+        module.kafka-cluster,
     ]
 }
 
-output "discountCouponAddress" {
-  value = module.discountCoupon.discountCouponAddress
+output "shop-loyaltycard-selledProductAddress" {
+  value = module.shop-loyaltycard-selledProduct.shop-loyaltycard-selledProductAddress
 }
 
-module "crossSellingRecommendation" {
-    source = "./modules/cross-selling-recommendation"
+module "discountCoupon-crossSellingRecommendation" {
+    source = "./modules/discount-coupon-cross-selling-recommendation"
     kafka_brokers = module.kafka-cluster.publicdnslist
     rds_address = module.rds.address
     rds_port = module.rds.port
@@ -212,35 +150,12 @@ module "crossSellingRecommendation" {
     docker_image_create_token = var.docker_image_create_token
     docker_image_pull_token = var.docker_image_pull_token
     docker_image_user = var.docker_image_user
-
     depends_on = [  
         module.kafka-cluster,
         module.rds,
     ]
 }
 
-output "CrossSellingRecommendationAddress" {
-  value = module.crossSellingRecommendation.CrossSellingRecommendationAddress
-}
-
-module "selledProduct" {
-  source                    = "./modules/selled-product"
-  kafka_brokers             = module.kafka-cluster.publicdnslist
-  rds_address               = module.rds.address
-  rds_port                  = module.rds.port
-  db_username               = var.db_username
-  db_password               = var.db_password
-  db_name                   = var.db_name
-  docker_image_create_token = var.docker_image_create_token
-  docker_image_pull_token   = var.docker_image_pull_token
-  docker_image_user         = var.docker_image_user
-
-  depends_on = [
-    module.kafka-cluster,
-    module.rds,
-  ]
-}
-
-output "selledProductAddress" {
-  value = module.selledProduct.selledProductAddress
+output "discountCoupon-crossSellingRecommendationAddress" {
+  value = module.discountCoupon-crossSellingRecommendation.discountCoupon-crossSellingRecommendationAddress
 }
