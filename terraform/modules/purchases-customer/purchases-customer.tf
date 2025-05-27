@@ -52,26 +52,33 @@ variable "db_password" {
 }
 
 variable "basePath" {
-  description = "Path for the kafka cluster module"
+  description = "Path for the user data script"
   type        = string
-  default     = "modules/"
+  default     = "modules/purchases-customer/"
 }
 
 variable "module_name" {
-  description = "Name of the module"
+  description = "Name of the first module"
   type        = string
-  default     = "selled-product"
+  default     = "purchases"
 }
 
-resource "aws_instance" "deployQuarkusSelledProduct" {
+variable "module_name2" {
+  description = "Name of the second module"
+  type        = string
+  default     = "customers"
+}
+
+resource "aws_instance" "deployQuarkusPurchasesCustomers" {
   depends_on = [null_resource.docker_build]
 
   ami                    = "ami-08cf815cff6ee258a" # Amazon Linux ARM AMI built by Amazon Web Services
-  instance_type          = "t4g.nano"
+  instance_type          = "t4g.micro"
   vpc_security_group_ids = [aws_security_group.instance.id]
   key_name               = "vockey"
   user_data = base64encode(templatefile("${var.basePath}MicroservicesCreation.sh", {
     module_name     = var.module_name
+    module_name2    = var.module_name2
     docker_username = var.docker_image_user
     docker_password = var.docker_image_pull_token
     rds_address     = var.rds_address
@@ -83,7 +90,7 @@ resource "aws_instance" "deployQuarkusSelledProduct" {
   }))
   user_data_replace_on_change = true
   tags = {
-    Name = "terraform-deploy-QuarkusSelledProduct"
+    Name = "terraform-deploy-QuarkusPurchases-Customers"
   }
 }
 resource "aws_security_group" "instance" {
@@ -107,16 +114,16 @@ resource "aws_security_group" "instance" {
 variable "security_group_name" {
   description = "The name of the security group"
   type        = string
-  default     = "terraform-Quarkus-selled-product"
+  default     = "terraform-Quarkus-purchases-customers"
 }
 
 resource "null_resource" "docker_build" {
   provisioner "local-exec" {
-    command = "docker login -u \"${var.docker_image_user}\" -p \"${var.docker_image_create_token}\" && cd ../microservices/${var.module_name} && ./mvnw clean package -Dquarkus.container-image.group=${var.docker_image_user} -Dquarkus.docker.buildx.platform=linux/arm64,linux/amd64 -Dquarkus.container-image.push=true"
+    command = "docker login -u \"${var.docker_image_user}\" -p \"${var.docker_image_create_token}\" && cd ../microservices/Purchase && ./mvnw clean package -Dquarkus.container-image.group=${var.docker_image_user} -Dquarkus.docker.buildx.platform=linux/arm64,linux/amd64 -Dquarkus.container-image.push=true && cd ../customer && ./mvnw clean package -Dquarkus.container-image.group=${var.docker_image_user} -Dquarkus.docker.buildx.platform=linux/arm64,linux/amd64 -Dquarkus.container-image.push=true"
   }
 }
 
-output "selledProductAddress" {
-  value       = aws_instance.deployQuarkusSelledProduct.public_dns
+output "purchases-customerAddress" {
+  value       = aws_instance.deployQuarkusPurchasesCustomers.public_dns
   description = "Address of the Quarkus EC2 machine"
 }

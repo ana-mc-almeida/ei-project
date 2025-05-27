@@ -26,4 +26,8 @@ sudo docker run -d\
   -e QUARKUS_DATASOURCE_REACTIVE_URL="mysql://${rds_address}:${rds_port}/${db_name}" \
   -e KAFKA_BOOTSTRAP_SERVERS="$kafka" \
    "${docker_username}"/"${module_name}":1.0.0-SNAPSHOT
+
+# Wait for the services to start
+sleep 30
+
 echo "Finished."

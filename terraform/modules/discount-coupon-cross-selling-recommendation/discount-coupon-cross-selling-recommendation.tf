@@ -1,3 +1,8 @@
+variable "kafka_brokers" {
+  description = "List of Kafka broker public DNS names"
+  type        = list(string)
+}
+
 variable "rds_address" {
   description = "RDS endpoint address"
   type        = string
@@ -47,26 +52,33 @@ variable "db_password" {
 }
 
 variable "basePath" {
-  description = "Path for the kafka cluster module"
+  description = "Path for the user data script"
   type        = string
-  default     = "modules/"
+  default     = "modules/discount-coupon-cross-selling-recommendation/"
 }
 
 variable "module_name" {
   description = "Name of the module"
   type        = string
-  default     = "loyaltycard"
+  default     = "discount-coupon"
 }
 
-resource "aws_instance" "deployQuarkusLoyaltyCard" {
+variable "module_name2" {
+  description = "Name of the second module"
+  type        = string
+  default     = "cross-selling-recommendation"
+}
+
+resource "aws_instance" "deployQuarkusDiscountCouponCrossSellingRecommendation" {
   depends_on = [null_resource.docker_build]
 
   ami                    = "ami-08cf815cff6ee258a" # Amazon Linux ARM AMI built by Amazon Web Services
-  instance_type          = "t4g.nano"
+  instance_type          = "t4g.micro"
   vpc_security_group_ids = [aws_security_group.instance.id]
   key_name               = "vockey"
   user_data = base64encode(templatefile("${var.basePath}MicroservicesCreation.sh", {
     module_name     = var.module_name
+    module_name2    = var.module_name2
     docker_username = var.docker_image_user
     docker_password = var.docker_image_pull_token
     rds_address     = var.rds_address
@@ -74,11 +86,11 @@ resource "aws_instance" "deployQuarkusLoyaltyCard" {
     db_username     = var.db_username
     db_name         = var.db_name
     db_password     = var.db_password
-    kafka_brokers   = ""
+    kafka_brokers   = join(" ", var.kafka_brokers)
   }))
   user_data_replace_on_change = true
   tags = {
-    Name = "terraform-deploy-QuarkusLoyaltyCard"
+    Name = "terraform-deploy-QuarkusDiscountCouponCrossSellingRecommendation"
   }
 }
 resource "aws_security_group" "instance" {
@@ -102,16 +114,16 @@ resource "aws_security_group" "instance" {
 variable "security_group_name" {
   description = "The name of the security group"
   type        = string
-  default     = "terraform-Quarkus-loyaltycard"
+  default     = "terraform-Quarkus-discount-coupon-cross-selling-recommendation"
 }
 
 resource "null_resource" "docker_build" {
   provisioner "local-exec" {
-    command = "docker login -u \"${var.docker_image_user}\" -p \"${var.docker_image_create_token}\" && cd ../microservices/loyaltycard && ./mvnw clean package -Dquarkus.container-image.group=${var.docker_image_user} -Dquarkus.docker.buildx.platform=linux/arm64,linux/amd64 -Dquarkus.container-image.push=true"
+    command = "docker login -u \"${var.docker_image_user}\" -p \"${var.docker_image_create_token}\" && cd ../microservices/discount-coupon && ./mvnw clean package -Dquarkus.container-image.group=${var.docker_image_user} -Dquarkus.docker.buildx.platform=linux/arm64,linux/amd64 -Dquarkus.container-image.push=true && cd ../cross-selling-recommendation && ./mvnw clean package -Dquarkus.container-image.group=${var.docker_image_user} -Dquarkus.docker.buildx.platform=linux/arm64,linux/amd64 -Dquarkus.container-image.push=true"
   }
 }
 
-output "loyaltyCardAddress" {
-  value       = aws_instance.deployQuarkusLoyaltyCard.public_dns
+output "discountCoupon-crossSellingRecommendationAddress" {
+  value       = aws_instance.deployQuarkusDiscountCouponCrossSellingRecommendation.public_dns
   description = "Address of the Quarkus EC2 machine"
 }

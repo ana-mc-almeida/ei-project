@@ -52,26 +52,40 @@ variable "db_password" {
 }
 
 variable "basePath" {
-  description = "Path for the kafka cluster module"
+  description = "Path for the user data script"
   type        = string
-  default     = "modules/"
+  default     = "modules/shop-loyaltycard-selled-product/"
 }
 
 variable "module_name" {
   description = "Name of the module"
   type        = string
-  default     = "discount-coupon"
+  default     = "shop"
 }
 
-resource "aws_instance" "deployQuarkusDiscountCoupon" {
+variable "module_name2" {
+  description = "Name of the second module"
+  type        = string
+  default     = "loyaltycard"
+}
+
+variable "module_name3" {
+  description = "Name of the third module"
+  type        = string
+  default     = "selled-product"
+}
+
+resource "aws_instance" "deployQuarkusShopLoyaltyCardSelledProduct" {
   depends_on = [null_resource.docker_build]
 
   ami                    = "ami-08cf815cff6ee258a" # Amazon Linux ARM AMI built by Amazon Web Services
-  instance_type          = "t4g.nano"
+  instance_type          = "t4g.small"
   vpc_security_group_ids = [aws_security_group.instance.id]
   key_name               = "vockey"
   user_data = base64encode(templatefile("${var.basePath}MicroservicesCreation.sh", {
     module_name     = var.module_name
+    module_name2    = var.module_name2
+    module_name3    = var.module_name3
     docker_username = var.docker_image_user
     docker_password = var.docker_image_pull_token
     rds_address     = var.rds_address
@@ -83,7 +97,7 @@ resource "aws_instance" "deployQuarkusDiscountCoupon" {
   }))
   user_data_replace_on_change = true
   tags = {
-    Name = "terraform-deploy-QuarkusDiscountCoupon"
+    Name = "terraform-deploy-QuarkusShop-LoyaltyCard-SelledProduct"
   }
 }
 resource "aws_security_group" "instance" {
@@ -107,16 +121,16 @@ resource "aws_security_group" "instance" {
 variable "security_group_name" {
   description = "The name of the security group"
   type        = string
-  default     = "terraform-Quarkus-discount-coupon"
+  default     = "terraform-Quarkus-shop-loyaltycard-selled-product"
 }
 
 resource "null_resource" "docker_build" {
   provisioner "local-exec" {
-    command = "docker login -u \"${var.docker_image_user}\" -p \"${var.docker_image_create_token}\" && cd ../microservices/${var.module_name} && ./mvnw clean package -Dquarkus.container-image.group=${var.docker_image_user} -Dquarkus.docker.buildx.platform=linux/arm64,linux/amd64 -Dquarkus.container-image.push=true"
+    command = "docker login -u \"${var.docker_image_user}\" -p \"${var.docker_image_create_token}\" && cd ../microservices/shop && ./mvnw clean package -Dquarkus.container-image.group=${var.docker_image_user} -Dquarkus.docker.buildx.platform=linux/arm64,linux/amd64 -Dquarkus.container-image.push=true && cd ../loyaltycard && ./mvnw clean package -Dquarkus.container-image.group=${var.docker_image_user} -Dquarkus.docker.buildx.platform=linux/arm64,linux/amd64 -Dquarkus.container-image.push=true && cd ../selled-product && ./mvnw clean package -Dquarkus.container-image.group=${var.docker_image_user} -Dquarkus.docker.buildx.platform=linux/arm64,linux/amd64 -Dquarkus.container-image.push=true"
   }
 }
 
-output "discountCouponAddress" {
-  value       = aws_instance.deployQuarkusDiscountCoupon.public_dns
+output "shop-loyaltycard-selledProductAddress" {
+  value       = aws_instance.deployQuarkusShopLoyaltyCardSelledProduct.public_dns
   description = "Address of the Quarkus EC2 machine"
 }
