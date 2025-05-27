@@ -42,8 +42,56 @@ kong/kong-gateway:3.9.0.0
 # Wait until Kong Gateway Admin API is up
 echo "Waiting for Kong Gateway to be ready..."
 until curl -s -o /dev/null -w "%%{http_code}" http://localhost:8001 | grep -q "200"; do
-  sleep 2
+  sleep 5
 done
 echo "Kong Admin Gateway is ready!"
+
+# Set the Ollama address
+curl -i -X POST --url http://localhost:8001/services/ --data 'name=ollama' --data "url=http://${ollama_address}:11434"
+
+# Set the Customer address
+curl -i -X POST --url http://localhost:8001/services/ --data 'name=customer' --data "url=http://${purchases_customer_address}:8081"
+
+# Set the Purchases address
+curl -i -X POST --url http://localhost:8001/services/ --data 'name=purchases' --data "url=http://${purchases_customer_address}:8080"
+
+# Set the Shop address
+curl -i -X POST --url http://localhost:8001/services/ --data 'name=shop' --data "url=http://${shop_loyaltycard_selled_products_address}:8080"
+
+# Set the Loyalty Card address
+curl -i -X POST --url http://localhost:8001/services/ --data 'name=loyaltycard' --data "url=http://${shop_loyaltycard_selled_products_address}:8081"
+
+# Set the Selled Product address
+curl -i -X POST --url http://localhost:8001/services/ --data 'name=selled-product' --data "url=http://${shop_loyaltycard_selled_products_address}:8082"
+
+# Set the Discount Coupon address
+curl -i -X POST --url http://localhost:8001/services/ --data 'name=discount-coupon' --data "url=http://${discount_coupons_cross_selling_address}:8080"
+
+# Set the Cross Selling Recommendation address
+curl -i -X POST --url http://localhost:8001/services/ --data 'name=cross-selling-recommendation' --data "url=http://${discount_coupons_cross_selling_address}:8081"
+
+# Set the Route for Ollama
+curl -i -X POST --url "http://localhost:8001/services/ollama/routes" --data "paths[]=~/api/generate" --data "strip_path=false"
+
+# Set the Route for Customer
+curl -i -X POST --url "http://localhost:8001/services/customer/routes" --data "paths[]=~/Customer(/.*)?" --data "strip_path=false"
+
+# Set the Route for Purchases
+curl -i -X POST --url "http://localhost:8001/services/purchases/routes" --data "paths[]=~/Purchase(/.*)?" --data "strip_path=false"
+
+# Set the Route for Shop
+curl -i -X POST --url "http://localhost:8001/services/shop/routes" --data "paths[]=~/Shop(/.*)?" --data "strip_path=false"
+
+# Set the Route for Loyalty Card
+curl -i -X POST --url "http://localhost:8001/services/loyaltycard/routes" --data "paths[]=~/Loyaltycard(/.*)?" --data "strip_path=false"
+
+# Set the Route for Selled Product
+curl -i -X POST --url "http://localhost:8001/services/selled-product/routes" --data "paths[]=~/SelledProduct(/.*)?" --data "strip_path=false"
+
+# Set the Route for Discount Coupon
+curl -i -X POST --url "http://localhost:8001/services/discount-coupon/routes" --data "paths[]=~/DiscountCoupon(/.*)?" --data "strip_path=false"
+
+# Set the Route for Cross Selling Recommendation
+curl -i -X POST --url "http://localhost:8001/services/cross-selling-recommendation/routes" --data "paths[]=~/CrossSellingRecommendation(/.*)?" --data "strip_path=false"
 
 echo "Finished."
