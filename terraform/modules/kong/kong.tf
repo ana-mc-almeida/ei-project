@@ -71,6 +71,7 @@ output "KongAddress" {
 }
 
 resource "null_resource" "kongSetup" {
+  depends_on = [aws_instance.InstallKong]
 
   connection {
     type        = "ssh"
