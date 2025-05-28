@@ -1,6 +1,6 @@
 #!/bin/bash
 
-EC2_DNS="ec2-34-237-145-199.compute-1.amazonaws.com"
+EC2_DNS="ec2-44-215-71-193.compute-1.amazonaws.com"
 API_URL="http://$EC2_DNS:8082/SelledProduct"
 
 post_data='{

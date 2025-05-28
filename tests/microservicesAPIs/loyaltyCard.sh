@@ -1,6 +1,7 @@
 #!/bin/bash
 
-API_URL='http://ec2-54-163-9-80.compute-1.amazonaws.com:8081/Loyaltycard'
+EC2_DNS="ec2-44-215-71-193.compute-1.amazonaws.com"
+API_URL="http://$EC2_DNS:8081/Loyaltycard"
 
 # Step 1: Check if the list is empty
 response=$(curl -s -X GET "$API_URL" -H 'accept: application/json')
