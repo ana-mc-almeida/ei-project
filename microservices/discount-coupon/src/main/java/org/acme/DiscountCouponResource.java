@@ -1,6 +1,9 @@
 package org.acme;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -91,5 +94,39 @@ public class DiscountCouponResource {
         return DiscountCoupon.delete(client, id)
                 .onItem().transform(deleted -> deleted ? Response.Status.NO_CONTENT : Response.Status.NOT_FOUND)
                 .onItem().transform(status -> Response.status(status).build());
+    }
+
+    @GET
+    @Path("health")
+    public Uni<Response> health() {
+        return DiscountCoupon.checkDatabaseConnection(client)
+                .onItem().transform(this::buildHealthResponse)
+                .onFailure().recoverWithItem(this::buildErrorResponse);
+    }
+
+    private Response buildHealthResponse(Boolean dbHealthy) {
+        Map<String, Object> healthStatus = new HashMap<>();
+        healthStatus.put("status", dbHealthy ? "UP" : "DOWN");
+        healthStatus.put("timestamp", System.currentTimeMillis());
+        
+        Map<String, Object> checks = new HashMap<>();
+        checks.put("database", dbHealthy ? "UP" : "DOWN");
+        checks.put("kafka_servers", kafka_servers != null ? "CONFIGURED" : "NOT_CONFIGURED");
+        
+        healthStatus.put("checks", checks);
+        
+        Response.Status responseStatus = dbHealthy ? Response.Status.OK : Response.Status.SERVICE_UNAVAILABLE;
+        return Response.status(responseStatus).entity(healthStatus).build();
+    }
+
+    private Response buildErrorResponse(Throwable throwable) {
+        Map<String, Object> healthStatus = new HashMap<>();
+        healthStatus.put("status", "DOWN");
+        healthStatus.put("timestamp", System.currentTimeMillis());
+        healthStatus.put("error", throwable.getMessage());
+        
+        return Response.status(Response.Status.SERVICE_UNAVAILABLE)
+                .entity(healthStatus)
+                .build();
     }
 }
