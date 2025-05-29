@@ -43,11 +43,11 @@ public class KafkaProvisioningResource {
                 "Price FLOAT," +
                 "Product TEXT NOT NULL," +
                 "Supplier TEXT NOT NULL," +
-                "shopname TEXT NOT NULL," +
+                "shopid BIGINT UNSIGNED," +
                 "loyaltycardid BIGINT UNSIGNED," +
                 "discountcouponid BIGINT UNSIGNED," +
                 "CONSTRAINT unique_purchase_all_columns UNIQUE (" +
-                "DateTime, Price, Product(200), Supplier(200), shopname(200), loyaltycardid, discountcouponid))")
+                "DateTime, Price, Product(200), Supplier(200), shopid, loyaltycardid, discountcouponid))")
                 .execute()
                 .await().indefinitely();
     }

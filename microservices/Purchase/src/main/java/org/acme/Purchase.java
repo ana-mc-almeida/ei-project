@@ -13,18 +13,18 @@ public class Purchase {
     public Float price;
     public String product;
     public String supplier;
-    public String shop_name;
+    public Long shop_id;
     public Long loyaltyCard_id;
     public Long discountCoupon_id;
 
     public Purchase(Long id, java.time.LocalDateTime timestamp, Float price, String product, String supplier,
-            String shop_name, Long loyaltyCard_id, Long discountCoupon_id) {
+            Long shop_id, Long loyaltyCard_id, Long discountCoupon_id) {
         this.id = id;
         this.timestamp = timestamp;
         this.price = price;
         this.product = product;
         this.supplier = supplier;
-        this.shop_name = shop_name;
+        this.shop_id = shop_id;
         this.loyaltyCard_id = loyaltyCard_id;
         this.discountCoupon_id = discountCoupon_id;
     }
@@ -36,7 +36,7 @@ public class Purchase {
     public String toString() {
         return "{id=" + id + ", timestamp=" + timestamp.toString() + ", price=" + price + ", product=" + product
                 + ", supplier="
-                + supplier + ", shop_name=" + shop_name + ", loyaltyCard_id=" + loyaltyCard_id + ", discountCouponId="
+                + supplier + ", shop_id=" + shop_id + ", loyaltyCard_id=" + loyaltyCard_id + ", discountCouponId="
                 + discountCoupon_id + "}";
     }
 
@@ -46,14 +46,14 @@ public class Purchase {
                 row.getFloat("Price"),
                 row.getString("Product"),
                 row.getString("Supplier"),
-                row.getString("shopname"),
+                row.getLong("shopid"),
                 row.getLong("loyaltycardid"),
                 row.getLong("discountcouponid"));
     }
 
     public static Multi<Purchase> findAll(MySQLPool client) {
         return client.query(
-                "SELECT id, DateTime, Price, Product , Supplier, shopname, loyaltycardid, discountcouponid FROM Purchases ORDER BY id ASC")
+                "SELECT id, DateTime, Price, Product , Supplier, shopid, loyaltycardid, discountcouponid FROM Purchases ORDER BY id ASC")
                 .execute()
                 .onItem().transformToMulti(set -> Multi.createFrom().iterable(set))
                 .onItem().transform(Purchase::from);
@@ -61,7 +61,7 @@ public class Purchase {
 
     public static Uni<Purchase> findById(MySQLPool client, Long id) {
         return client.preparedQuery(
-                "SELECT id, DateTime, Price, Product , Supplier, shopname, loyaltycardid, discountcouponid FROM Purchases WHERE id = ?")
+                "SELECT id, DateTime, Price, Product , Supplier, shopid, loyaltycardid, discountcouponid FROM Purchases WHERE id = ?")
                 .execute(Tuple.of(id))
                 .onItem().transform(RowSet::iterator)
                 .onItem().transform(iterator -> iterator.hasNext() ? from(iterator.next()) : null);
