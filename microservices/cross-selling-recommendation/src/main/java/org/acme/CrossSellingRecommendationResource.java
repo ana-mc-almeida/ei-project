@@ -3,9 +3,13 @@ package org.acme;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
+
+import java.util.HashMap;
+
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
+import java.util.Map;
 
 import io.quarkus.runtime.StartupEvent;
 import io.smallrye.mutiny.Uni;
@@ -16,10 +20,6 @@ public class CrossSellingRecommendationResource {
 
     @Inject
     io.vertx.mutiny.mysqlclient.MySQLPool client;
-
-    @Inject
-    @ConfigProperty(name = "myapp.schema.create", defaultValue = "true")
-    boolean schemaCreate;
 
     @ConfigProperty(name = "kafka.bootstrap.servers")
     String kafka_servers;
@@ -41,5 +41,23 @@ public class CrossSellingRecommendationResource {
                     }
                 });
         return Uni.createFrom().item(Response.accepted().entity("Message sent to Kafka Topic: " + message).build());
+    }
+
+    @GET
+    @Path("health")
+    public Response health() {
+        boolean kafkaConfigured = kafka_servers != null && !kafka_servers.trim().isEmpty();
+
+        Map<String, Object> healthStatus = new HashMap<>();
+        healthStatus.put("status", kafkaConfigured ? "UP" : "DOWN");
+        healthStatus.put("timestamp", System.currentTimeMillis());
+
+        Map<String, Object> checks = new HashMap<>();
+        checks.put("kafka_servers", kafkaConfigured ? "CONFIGURED" : "NOT_CONFIGURED");
+
+        healthStatus.put("checks", checks);
+
+        Response.Status responseStatus = kafkaConfigured ? Response.Status.OK : Response.Status.SERVICE_UNAVAILABLE;
+        return Response.status(responseStatus).entity(healthStatus).build();
     }
 }
