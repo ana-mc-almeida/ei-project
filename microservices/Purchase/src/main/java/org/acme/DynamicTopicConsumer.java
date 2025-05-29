@@ -55,7 +55,7 @@ public class DynamicTopicConsumer extends Thread {
                         String price = obj.getJSONObject("Purchase_Event").getString("Price");
                         String product = obj.getJSONObject("Purchase_Event").getString("Product");
                         String supplier = obj.getJSONObject("Purchase_Event").getString("Supplier");
-                        String shop_name = obj.getJSONObject("Purchase_Event").getString("Shop");
+                        String shop_id = obj.getJSONObject("Purchase_Event").getString("Shop");
                         String loyaltyCard_id = obj.getJSONObject("Purchase_Event").getString("LoyaltyCard_ID");
                         String discountCoupon_id = obj.getJSONObject("Purchase_Event").getString("DiscountCoupon_ID");
 
@@ -64,7 +64,7 @@ public class DynamicTopicConsumer extends Thread {
                             discountCouponIdValue = Long.parseLong(discountCoupon_id);
                         }
 
-                        String query = "INSERT INTO Purchases (DateTime, Price, Product, Supplier, shopname, loyaltycardid, discountcouponid) "
+                        String query = "INSERT INTO Purchases (DateTime, Price, Product, Supplier, shopid, loyaltycardid, discountcouponid) "
                                 +
                                 "VALUES (?, ?, ?, ?, ?, ?, ?)"; // 7 parameters
 
@@ -73,7 +73,7 @@ public class DynamicTopicConsumer extends Thread {
                                 .addFloat(Float.parseFloat(price)) // Price (Float)
                                 .addString(product) // Product (String)
                                 .addString(supplier) // Supplier (String)
-                                .addString(shop_name) // Shop Name (String)
+                                .addLong(Long.parseLong(shop_id)) // Shop_ID (Long)
                                 .addLong(Long.parseLong(loyaltyCard_id)) // LoyaltyCard_ID (Long)
                                 .addLong(discountCouponIdValue); // DiscountCoupon_ID (Long)
 
