@@ -1,9 +1,18 @@
 #!/bin/bash
 
-set -e
-
 TERRAFORM_DIR="../../terraform"
 TEST_DIR="$(pwd)"
+
+declare -A ports=(
+  ["crossSellingRecomendations.sh"]="8081"
+  ["customer.sh"]="8081"
+  ["discountCoupon.sh"]="8080"
+  ["loyaltyCard.sh"]="8081"
+  ["ollama.sh"]="11434"
+  ["purchase.sh"]="8082"
+  ["selledProductRecommendation.sh"]="8085"
+  ["shops.sh"]="8080"
+)
 
 echo "📦 Executando terraform output em: $TERRAFORM_DIR"
 terraform_output=$(cd "$TERRAFORM_DIR" && terraform output)
@@ -50,17 +59,24 @@ declare -A test_dns_keys=(
 for script in "${!test_dns_keys[@]}"; do
   dns_key="${test_dns_keys[$script]}"
   dns="${dns_map[$dns_key]}"
+  port="${ports[$script]}"
+
+  script_path="$TEST_DIR/$script"
 
   if [[ -z "$dns" ]]; then
     echo "⚠️  DNS não encontrado para a chave: $dns_key. Pulando $script."
     continue
   fi
 
-  script_path="$TEST_DIR/$script"
-
   if [[ -f "$script_path" ]]; then
-    echo "🛠️  Atualizando $script com DNS: $dns"
+    echo "🛠️  Atualizando $script com DNS: $dns e PORT: $port"
+
+    # Atualiza EC2_DNS
     sed -i.bak -E "s|^EC2_DNS=\"[^\"]*\"|EC2_DNS=\"$dns\"|" "$script_path"
+
+    # Atualiza PORT
+    sed -i.bak -E "s|^PORT=[0-9]+|PORT=$port|" "$script_path"
+
     rm -f "$script_path.bak"
   else
     echo "❌ Script não encontrado: $script_path"

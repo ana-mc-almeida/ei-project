@@ -1,5 +1,7 @@
 # microservicesAPIs tests documentation
 
+> TODO: this documentation and all the documentation is outdated and needs to be updated.
+
 ### Prerequisites
 
 - bash
