@@ -13,6 +13,7 @@ import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
+import java.util.Map;
 
 @Path("DiscountCoupon")
 public class DiscountCouponResource {
@@ -82,7 +83,9 @@ public class DiscountCouponResource {
                             });
                     return URI.create("/discountCoupon/" + id);
                 })
-                .onItem().transform(uri -> Response.created(uri).build());
+                .onItem().transform(uri -> Response.created(uri)
+                        .entity(Map.of("id", uri.getPath().split("/")[2]))
+                        .build());
     }
 
     @DELETE

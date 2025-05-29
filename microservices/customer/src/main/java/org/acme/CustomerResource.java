@@ -11,6 +11,7 @@ import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
 import jakarta.ws.rs.core.MediaType;
+import java.util.Map;
 
 @Path("Customer")
 public class CustomerResource {
@@ -59,7 +60,9 @@ public class CustomerResource {
                         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                                 .entity("Failed to create Customer").build();
                     }
-                    return Response.created(URI.create("/customer/" + id)).build();
+                    return Response.created(URI.create("/customer/" + id))
+                            .entity(Map.of("id", id))
+                            .build();
                 });
     }
 

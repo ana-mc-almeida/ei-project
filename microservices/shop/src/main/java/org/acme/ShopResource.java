@@ -1,6 +1,8 @@
 package org.acme;
 
 import java.net.URI;
+import java.util.Map;
+
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -57,7 +59,9 @@ public class ShopResource {
                         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                                 .entity("Failed to create Shop").build();
                     }
-                    return Response.created(URI.create("/shop/" + id)).build();
+                    return Response.created(URI.create("/shop/" + id))
+                            .entity(Map.of("id", id))
+                            .build();
                 });
     }
 
