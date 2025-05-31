@@ -1,6 +1,9 @@
 package org.acme;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -10,9 +13,6 @@ import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
-import jakarta.ws.rs.core.MediaType;
-
-import java.util.Map;
 
 @Path("Loyaltycard")
 public class LoyaltycardResource {
@@ -88,4 +88,36 @@ public class LoyaltycardResource {
                 .onItem().transform(status -> Response.status(status).build());
     }
 
+    @GET
+    @Path("health")
+    public Uni<Response> health() {
+        return Loyaltycard.checkDatabaseConnection(client)
+                .onItem().transform(this::buildHealthResponse)
+                .onFailure().recoverWithItem(this::buildErrorResponse);
+    }
+
+    private Response buildHealthResponse(Boolean dbHealthy) {
+        Map<String, Object> healthStatus = new HashMap<>();
+        healthStatus.put("status", dbHealthy ? "UP" : "DOWN");
+        healthStatus.put("timestamp", System.currentTimeMillis());
+
+        Map<String, Object> checks = new HashMap<>();
+        checks.put("database", dbHealthy ? "UP" : "DOWN");
+
+        healthStatus.put("checks", checks);
+
+        Response.Status responseStatus = dbHealthy ? Response.Status.OK : Response.Status.SERVICE_UNAVAILABLE;
+        return Response.status(responseStatus).entity(healthStatus).build();
+    }
+
+    private Response buildErrorResponse(Throwable throwable) {
+        Map<String, Object> healthStatus = new HashMap<>();
+        healthStatus.put("status", "DOWN");
+        healthStatus.put("timestamp", System.currentTimeMillis());
+        healthStatus.put("error", throwable.getMessage());
+
+        return Response.status(Response.Status.SERVICE_UNAVAILABLE)
+                .entity(healthStatus)
+                .build();
+    }
 }

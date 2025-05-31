@@ -8,9 +8,9 @@ terraform {
   }
 
   backend "s3" {
-    bucket                  = "terraform-ie-project-bucket"
-    key                     = "terraform.tfstate"
-    region                  = "us-east-1"
+    bucket                   = "terraform-ie-project-bucket"
+    key                      = "terraform.tfstate"
+    region                   = "us-east-1"
     shared_credentials_files = ["../.aws/credentials"]
   }
 }
@@ -119,20 +119,20 @@ output "purchases-customerAddress" {
 }
 
 module "shop-loyaltycard-selledProduct" {
-    source = "./modules/shop-loyaltycard-selled-product"
-    kafka_brokers = module.kafka-cluster.publicdnslist
-    rds_address = module.rds.address
-    rds_port = module.rds.port
-    db_username = var.db_username
-    db_password = var.db_password
-    db_name = var.db_name
-    docker_image_create_token = var.docker_image_create_token
-    docker_image_pull_token = var.docker_image_pull_token
-    docker_image_user = var.docker_image_user
-    depends_on = [  
-        module.rds,
-        module.kafka-cluster,
-    ]
+  source                    = "./modules/shop-loyaltycard-selled-product"
+  kafka_brokers             = module.kafka-cluster.publicdnslist
+  rds_address               = module.rds.address
+  rds_port                  = module.rds.port
+  db_username               = var.db_username
+  db_password               = var.db_password
+  db_name                   = var.db_name
+  docker_image_create_token = var.docker_image_create_token
+  docker_image_pull_token   = var.docker_image_pull_token
+  docker_image_user         = var.docker_image_user
+  depends_on = [
+    module.rds,
+    module.kafka-cluster,
+  ]
 }
 
 output "shop-loyaltycard-selledProductAddress" {
@@ -140,20 +140,20 @@ output "shop-loyaltycard-selledProductAddress" {
 }
 
 module "discountCoupon-crossSellingRecommendation" {
-    source = "./modules/discount-coupon-cross-selling-recommendation"
-    kafka_brokers = module.kafka-cluster.publicdnslist
-    rds_address = module.rds.address
-    rds_port = module.rds.port
-    db_username = var.db_username
-    db_password = var.db_password
-    db_name = var.db_name
-    docker_image_create_token = var.docker_image_create_token
-    docker_image_pull_token = var.docker_image_pull_token
-    docker_image_user = var.docker_image_user
-    depends_on = [  
-        module.kafka-cluster,
-        module.rds,
-    ]
+  source                    = "./modules/discount-coupon-cross-selling-recommendation"
+  kafka_brokers             = module.kafka-cluster.publicdnslist
+  rds_address               = module.rds.address
+  rds_port                  = module.rds.port
+  db_username               = var.db_username
+  db_password               = var.db_password
+  db_name                   = var.db_name
+  docker_image_create_token = var.docker_image_create_token
+  docker_image_pull_token   = var.docker_image_pull_token
+  docker_image_user         = var.docker_image_user
+  depends_on = [
+    module.kafka-cluster,
+    module.rds,
+  ]
 }
 
 output "discountCoupon-crossSellingRecommendationAddress" {
@@ -161,17 +161,17 @@ output "discountCoupon-crossSellingRecommendationAddress" {
 }
 
 module "Kong" {
-    source = "./modules/kong"
-    ollama_address = module.ollama.address[0]
-    purchases_customer_address = module.purchases-customers.purchases-customerAddress
-    discount_coupons_cross_selling_address = module.discountCoupon-crossSellingRecommendation.discountCoupon-crossSellingRecommendationAddress
-    shop_loyaltycard_selled_products_address = module.shop-loyaltycard-selledProduct.shop-loyaltycard-selledProductAddress
-    depends_on = [  
-        module.discountCoupon-crossSellingRecommendation,
-        module.shop-loyaltycard-selledProduct,
-        module.purchases-customers,
-        module.ollama,
-    ]
+  source                                   = "./modules/kong"
+  ollama_address                           = module.ollama.address[0]
+  purchases_customer_address               = module.purchases-customers.purchases-customerAddress
+  discount_coupons_cross_selling_address   = module.discountCoupon-crossSellingRecommendation.discountCoupon-crossSellingRecommendationAddress
+  shop_loyaltycard_selled_products_address = module.shop-loyaltycard-selledProduct.shop-loyaltycard-selledProductAddress
+  depends_on = [
+    module.discountCoupon-crossSellingRecommendation,
+    module.shop-loyaltycard-selledProduct,
+    module.purchases-customers,
+    module.ollama,
+  ]
 }
 
 output "KongAddress" {
@@ -179,11 +179,11 @@ output "KongAddress" {
 }
 
 module "Camunda" {
-    source = "./modules/camunda"
-    kong_address = module.Kong.KongAddress
-    depends_on = [  
-      module.Kong,
-    ]
+  source       = "./modules/camunda"
+  kong_address = module.Kong.KongAddress
+  depends_on = [
+    module.Kong,
+  ]
 }
 
 output "CamundaAddress" {

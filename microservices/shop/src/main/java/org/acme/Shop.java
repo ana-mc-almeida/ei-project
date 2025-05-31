@@ -80,4 +80,11 @@ public class Shop {
 				.execute(Tuple.of(name_R, address_R, postalCode_R, id_R))
 				.onItem().transform(pgRowSet -> pgRowSet.rowCount() == 1);
 	}
+
+	public static Uni<Boolean> checkDatabaseConnection(MySQLPool client) {
+		return client.query("SELECT 1")
+				.execute()
+				.onItem().transform(result -> true)
+				.onFailure().recoverWithItem(false);
+	}
 }

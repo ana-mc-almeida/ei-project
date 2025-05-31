@@ -2,7 +2,6 @@ package org.acme;
 
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
-import io.vertx.mutiny.mysqlclient.MySQLClient;
 import io.vertx.mutiny.mysqlclient.MySQLPool;
 import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.RowSet;
@@ -75,5 +74,12 @@ public class Loyaltycard {
 		return client.preparedQuery("DELETE FROM LoyaltyCards WHERE idCustomer = ? AND idShop = ?")
 				.execute(Tuple.of(idCustomer_R, idShop_R))
 				.onItem().transform(pgRowSet -> pgRowSet.rowCount() == 1);
+	}
+
+	public static Uni<Boolean> checkDatabaseConnection(MySQLPool client) {
+		return client.query("SELECT 1")
+				.execute()
+				.onItem().transform(result -> true)
+				.onFailure().recoverWithItem(false);
 	}
 }

@@ -134,3 +134,30 @@ output "shop-loyaltycard-selledProductAddress" {
   value       = aws_instance.deployQuarkusShopLoyaltyCardSelledProduct.public_dns
   description = "Address of the Quarkus EC2 machine"
 }
+
+resource "null_resource" "health_check" {
+  depends_on = [aws_instance.deployQuarkusShopLoyaltyCardSelledProduct]
+
+  connection {
+    type        = "ssh"
+    host        = aws_instance.deployQuarkusShopLoyaltyCardSelledProduct.public_dns
+    user        = "ec2-user"
+    private_key = file("../labsuser.pem")
+    timeout     = "30s"
+  }
+
+  provisioner "file" {
+    content = templatefile("${var.basePath}setup.sh", {
+      publicdns = aws_instance.deployQuarkusShopLoyaltyCardSelledProduct.public_dns
+    })
+    destination = "/tmp/setup.sh"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "chmod +x /tmp/setup.sh",
+      "sudo /tmp/setup.sh",
+      "rm -rf /tmp/setup.sh",
+    ]
+  }
+}
