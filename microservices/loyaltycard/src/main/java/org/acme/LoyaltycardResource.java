@@ -13,7 +13,6 @@ import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
-import jakarta.ws.rs.core.MediaType;
 
 @Path("Loyaltycard")
 public class LoyaltycardResource {
@@ -99,12 +98,12 @@ public class LoyaltycardResource {
         Map<String, Object> healthStatus = new HashMap<>();
         healthStatus.put("status", dbHealthy ? "UP" : "DOWN");
         healthStatus.put("timestamp", System.currentTimeMillis());
-        
+
         Map<String, Object> checks = new HashMap<>();
         checks.put("database", dbHealthy ? "UP" : "DOWN");
-        
+
         healthStatus.put("checks", checks);
-        
+
         Response.Status responseStatus = dbHealthy ? Response.Status.OK : Response.Status.SERVICE_UNAVAILABLE;
         return Response.status(responseStatus).entity(healthStatus).build();
     }
@@ -114,7 +113,7 @@ public class LoyaltycardResource {
         healthStatus.put("status", "DOWN");
         healthStatus.put("timestamp", System.currentTimeMillis());
         healthStatus.put("error", throwable.getMessage());
-        
+
         return Response.status(Response.Status.SERVICE_UNAVAILABLE)
                 .entity(healthStatus)
                 .build();

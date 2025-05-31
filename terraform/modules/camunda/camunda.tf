@@ -10,11 +10,11 @@ variable "kong_address" {
 }
 
 resource "aws_instance" "InstallCamundaEngine" {
-  ami                         = "ami-045269a1f5c90a6a0"
-  instance_type               = "t2.small"
-  vpc_security_group_ids      = [aws_security_group.instance.id]
-  key_name                    = "vockey"
-  user_data                   = base64encode(templatefile("${var.basePath}deploy.sh", {
+  ami                    = "ami-045269a1f5c90a6a0"
+  instance_type          = "t2.small"
+  vpc_security_group_ids = [aws_security_group.instance.id]
+  key_name               = "vockey"
+  user_data = base64encode(templatefile("${var.basePath}deploy.sh", {
     kong_address = var.kong_address,
   }))
   user_data_replace_on_change = true

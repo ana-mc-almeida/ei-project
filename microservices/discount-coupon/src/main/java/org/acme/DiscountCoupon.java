@@ -97,9 +97,9 @@ public class DiscountCoupon {
 	}
 
 	public static Uni<Boolean> checkDatabaseConnection(MySQLPool client) {
-        return client.query("SELECT 1")
-                .execute()
-                .onItem().transform(result -> true)
-                .onFailure().recoverWithItem(false);
-    }
+		return client.query("SELECT 1")
+				.execute()
+				.onItem().transform(result -> true)
+				.onFailure().recoverWithItem(false);
+	}
 }

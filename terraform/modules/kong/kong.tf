@@ -25,14 +25,14 @@ variable "shop_loyaltycard_selled_products_address" {
 }
 
 resource "aws_instance" "InstallKong" {
-  ami                         = "ami-045269a1f5c90a6a0"
-  instance_type               = "t2.small"
-  vpc_security_group_ids      = [aws_security_group.instance.id]
-  key_name                    = "vockey"
-  user_data                   = base64encode(templatefile("${var.basePath}deploy.sh", {
-    ollama_address = var.ollama_address,
-    purchases_customer_address = var.purchases_customer_address,
-    discount_coupons_cross_selling_address = var.discount_coupons_cross_selling_address,
+  ami                    = "ami-045269a1f5c90a6a0"
+  instance_type          = "t2.small"
+  vpc_security_group_ids = [aws_security_group.instance.id]
+  key_name               = "vockey"
+  user_data = base64encode(templatefile("${var.basePath}deploy.sh", {
+    ollama_address                           = var.ollama_address,
+    purchases_customer_address               = var.purchases_customer_address,
+    discount_coupons_cross_selling_address   = var.discount_coupons_cross_selling_address,
     shop_loyaltycard_selled_products_address = var.shop_loyaltycard_selled_products_address,
   }))
 

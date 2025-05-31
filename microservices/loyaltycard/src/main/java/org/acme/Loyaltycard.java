@@ -2,7 +2,6 @@ package org.acme;
 
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
-import io.vertx.mutiny.mysqlclient.MySQLClient;
 import io.vertx.mutiny.mysqlclient.MySQLPool;
 import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.RowSet;
@@ -78,9 +77,9 @@ public class Loyaltycard {
 	}
 
 	public static Uni<Boolean> checkDatabaseConnection(MySQLPool client) {
-        return client.query("SELECT 1")
-                .execute()
-                .onItem().transform(result -> true)
-                .onFailure().recoverWithItem(false);
-    }
+		return client.query("SELECT 1")
+				.execute()
+				.onItem().transform(result -> true)
+				.onFailure().recoverWithItem(false);
+	}
 }
