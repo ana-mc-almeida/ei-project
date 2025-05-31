@@ -59,7 +59,9 @@ public class ShopResource {
                         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                                 .entity("Failed to create Shop").build();
                     }
-                    return Response.created(URI.create("/shop/" + id)).build();
+                    return Response.created(URI.create("/shop/" + id))
+                            .entity(Map.of("id", id))
+                            .build();
                 });
     }
 

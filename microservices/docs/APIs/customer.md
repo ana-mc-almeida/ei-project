@@ -30,6 +30,20 @@ curl -X 'GET' \
 
 </details>
 
+Returns a JSON array of customer objects, each containing the following fields:
+
+```json
+[
+  {
+    "FiscalNumber": <integer>,
+    "address": <string>,
+    "postalCode": <string>,
+    "name": <string>
+  },
+  ...
+]
+```
+
 ## GET /Customer/{id}
 
 Retrieves a specific customer by ID.
@@ -45,6 +59,17 @@ curl -X 'GET' \
 
 > In this example, the EC2 instance is accessed via its public DNS name `ec2-44-193-226-242.compute-1.amazonaws.com` on port `8080`. Don't forget to replace this with your actual instance's public DNS or IP address.
 
+Response will be a JSON object containing the customer details:
+
+```json
+{
+  "FiscalNumber": <integer>,
+  "address": <string>,
+  "postalCode": <string>,
+  "name": <string>
+}
+```
+
 </details>
 
 ## POST /Customer
@@ -59,6 +84,14 @@ Must include a body like this:
   "address": <string>,
   "postalCode": <string>,
   "name": <string>
+}
+```
+
+Returns an object with the created customer ID.
+
+```json
+{
+  "id": <integer>
 }
 ```
 

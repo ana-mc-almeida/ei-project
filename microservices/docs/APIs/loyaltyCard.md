@@ -31,6 +31,19 @@ curl -X 'GET' \
 
 </details>
 
+Returns a JSON array of loyalty card objects, each containing the following fields:
+
+```json
+[
+  {
+    "id": <integer>,
+    "idCustomer": <integer>,
+    "idShop": <integer>
+  },
+  ...
+]
+```
+
 ## GET /LoyaltyCard/{id}
 
 Retrieves a specific loyalty card by its unique ID.
@@ -48,6 +61,16 @@ curl -X 'GET' \
 
 </details>
 
+Returns a JSON object containing the loyalty card details:
+
+```json
+{
+  "id": <integer>,
+  "idCustomer": <integer>,
+  "idShop": <integer>
+}
+```
+
 ## GET /LoyaltyCard/{idCustomer}/{idShop}
 
 Retrieves a loyalty card by customer ID and shop ID.
@@ -64,6 +87,16 @@ curl -X 'GET' \
 > In this example, the EC2 instance is accessed via its public DNS name `ec2-44-222-220-109.compute-1.amazonaws.com` on port `8080`. Replace the public DNS with your actual instance address if different.
 
 </details>
+
+Returns a JSON object containing the loyalty card details:
+
+```json
+{
+  "id": <integer>,
+  "idCustomer": <integer>,
+  "idShop": <integer>
+}
+```
 
 ## POST /LoyaltyCard
 
@@ -95,6 +128,14 @@ curl -X 'POST' \
 > In this example, the EC2 instance is accessed via its public DNS name `ec2-44-222-220-109.compute-1.amazonaws.com` on port `8080`. Replace the public DNS with your actual instance address if different.
 
 </details>
+
+Returns a JSON object with the created loyalty card ID:
+
+```json
+{
+  "id": <integer>
+}
+```
 
 ## DELETE /LoyaltyCard/{id}
 

@@ -5,11 +5,11 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
-import java.util.Map;
 
 import io.quarkus.runtime.StartupEvent;
 import io.smallrye.mutiny.Uni;

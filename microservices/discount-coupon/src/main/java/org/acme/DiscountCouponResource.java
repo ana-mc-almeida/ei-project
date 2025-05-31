@@ -85,14 +85,17 @@ public class DiscountCouponResource {
 							});
 					return URI.create("/discountCoupon/" + id);
 				})
-				.onItem().transform(uri -> Response.created(uri).build());
+				.onItem().transform(uri -> Response.created(uri)
+						.entity(Map.of("id", Long.valueOf(uri.getPath().split("/")[2])))
+						.build());
 	}
 
 	@DELETE
 	@Path("{id}")
 	public Uni<Response> delete(Long id) {
 		return DiscountCoupon.delete(client, id)
-				.onItem().transform(deleted -> deleted ? Response.Status.NO_CONTENT : Response.Status.NOT_FOUND)
+				.onItem()
+				.transform(deleted -> deleted ? Response.Status.NO_CONTENT : Response.Status.NOT_FOUND)
 				.onItem().transform(status -> Response.status(status).build());
 	}
 

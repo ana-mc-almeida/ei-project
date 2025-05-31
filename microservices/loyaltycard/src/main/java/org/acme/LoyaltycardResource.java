@@ -66,7 +66,9 @@ public class LoyaltycardResource {
                         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                                 .entity("Failed to create Loyaltycard").build();
                     }
-                    return Response.created(URI.create("/loyaltycard/" + id)).build();
+                    return Response.created(URI.create("/loyaltycard/" + id))
+                            .entity(Map.of("id", id))
+                            .build();
                 });
     }
 

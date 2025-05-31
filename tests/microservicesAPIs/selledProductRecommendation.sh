@@ -1,7 +1,8 @@
 #!/bin/bash
 
-EC2_DNS="ec2-34-237-145-199.compute-1.amazonaws.com"
-API_URL="http://$EC2_DNS:8082/SelledProduct"
+EC2_DNS="ec2-44-201-142-106.compute-1.amazonaws.com"
+PORT=8000
+API_URL="http://$EC2_DNS:$PORT/SelledProduct"
 
 post_data='{
   "typeOfAnalysis": "CUSTOMER",

@@ -2,12 +2,14 @@
 
 This script tests the [customer microservice API](../../../microservices/docs/APIs/customer.md) by performing the following actions:
 
-## 1. Get clean customer list
+## 1. Get initial customer list
 
-This step tests the `GET /Customer` endpoint to retrieve a clean list of customers.
+This step tests the `GET /Customer` endpoint to retrieve the current list of customers and verify that a JSON array is returned.
 
 ## 2. Create a new customer
+
 This step tests the `POST /Customer` endpoint to create a new customer with the following data:
+
 ```json
 {
   "FiscalNumber": 0,
@@ -17,14 +19,20 @@ This step tests the `POST /Customer` endpoint to create a new customer with the 
 }
 ```
 
-## 3. Get all customers
-This step tests the `GET /Customer` endpoint to retrieve all customers, including the one created in step 2.
+It then extracts the newly created shop's ID from the response.
 
-## 4. Get the created customer
-This step tests the `GET /Customer/{id}` endpoint to retrieve the customer created in the previous step.
+## 3. Get all customers after creation
+
+This step tests the `GET /Customer` endpoint to ensure that the newly created customer is present in the customer list.
+
+## 4. Get the created customer by ID
+
+This step tests the `GET /Customer/{id}` endpoint to retrieve the newly created customer by their unique ID.
 
 ## 5. Update the customer by ID
+
 This step tests the `PUT /Customer/{id}` endpoint to update the customer created in step 2 with the following data:
+
 ```json
 {
   "FiscalNumber": 1,
@@ -35,11 +43,13 @@ This step tests the `PUT /Customer/{id}` endpoint to update the customer created
 ```
 
 ## 6. Get the updated customer
-This step tests the `GET /Customer/{id}` endpoint to retrieve the updated customer.
+
+This step tests the `GET /Customer/{id}` endpoint again to confirm that the customer’s information has been updated correctly.
 
 ## 7. Delete the customer by ID
-This step tests the `DELETE /Customer/{id}` endpoint to delete the customer created in step 2.
 
-## 8. Get clean customer list again
-This step tests the `GET /Customer` endpoint to retrieve a clean list of customers after the deletion in step 7.
+This step tests the `DELETE /Customer/{id}` endpoint to delete the customer that was created created in step 2 and updated in the previous steps.
 
+## 8. Get all customers after deletion
+
+This step tests the `GET /Customer` endpoint one final time to ensure the customer was successfully deleted and is no longer present in the list.

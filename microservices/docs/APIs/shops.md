@@ -30,6 +30,20 @@ curl -X 'GET' \
 
 </details>
 
+Returns a JSON array of shop objects, each containing the following fields:
+
+```json
+[
+  {
+    "id": <integer>,
+    "address": <string>,
+    "postalCode": <string>,
+    "name": <string>
+  },
+  ...
+]
+```
+
 ## GET /Shop/{id}
 
 Retrieves a specific shop by ID.
@@ -46,6 +60,17 @@ curl -X 'GET' \
 > In this example, the EC2 instance is accessed via its public DNS name `ec2-3-234-223-157.compute-1.amazonaws.com` on port `8080`. Don't forget to replace this with your actual instance's public DNS or IP address.
 
 </details>
+
+Response will be a JSON object containing the shop details:
+
+```json
+{
+  "id": <integer>,
+  "address": <string>,
+  "postalCode": <string>,
+  "name": <string>
+}
+```
 
 ## POST /Shop
 
@@ -79,6 +104,14 @@ curl -X 'POST' \
 > In this example, the EC2 instance is accessed via its public DNS name `ec2-3-234-223-157.compute-1.amazonaws.com` on port `8080`. Don't forget to replace this with your actual instance's public DNS or IP address.
 
 </details>
+
+Returns an object with the created shop ID:
+
+```json
+{
+  "id": <integer>
+}
+```
 
 ## PUT /Shop/{id}
 
