@@ -29,6 +29,21 @@ curl -X 'GET' \
 
 </details>
 
+Returns a JSON array of discount coupon objects, each containing the following fields:
+
+```json
+[
+  {
+    "id": <integer>,
+    "idLoyaltyCard": <integer>,
+    "idsShops": [<integer>, <integer>, ...],
+    "discount": <integer>,
+    "expirationDate": "YYYY-MM-DDTHH:MM:SS"
+  },
+  ...
+]
+```
+
 ## GET /DiscountCoupon/{id}
 
 Retrieves a specific discount coupon by its unique ID.
@@ -45,6 +60,18 @@ curl -X 'GET' \
 > In this example, the EC2 instance is accessed via its public DNS name `ec2-3-221-149-118.compute-1.amazonaws.com` on port `8080`. Replace this with your actual instance address if different.
 
 </details>
+
+Response will be a JSON object containing the discount coupon details:
+
+```json
+{
+  "id": <integer>,
+  "idLoyaltyCard": <integer>,
+  "idsShops": [<integer>, <integer>, ...],
+  "discount": <integer>,
+  "expirationDate": "YYYY-MM-DDTHH:MM:SS"
+}
+```
 
 ## POST /DiscountCoupon
 
@@ -80,6 +107,14 @@ curl -X 'POST' \
 > In this example, the EC2 instance is accessed via its public DNS name `ec2-3-221-149-118.compute-1.amazonaws.com` on port `8080`. Replace this with your actual instance address if different.
 
 </details>
+
+Returns an object with the created discount coupon ID:
+
+```json
+{
+  "id": <integer>
+}
+```
 
 ## DELETE /DiscountCoupon/{id}
 

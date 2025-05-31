@@ -1,6 +1,17 @@
-# microservicesAPIs tests documentation
+# microservicesAPIs tests documentation <!-- omit in toc -->
 
-> TODO: this documentation and all the documentation is outdated and needs to be updated.
+<details>
+<summary>Table of Contents</summary>
+
+- [Prerequisites](#prerequisites)
+- [Running the tests](#running-the-tests)
+  - [Update EC2 Instance DNS Names](#update-ec2-instance-dns-names)
+  - [Test Kong](#test-kong)
+  - [Run all tests](#run-all-tests)
+  - [Give execute permissions to the test scripts](#give-execute-permissions-to-the-test-scripts)
+- [Available Scripts](#available-scripts)
+
+</details>
 
 ### Prerequisites
 
@@ -14,21 +25,43 @@ Before running the tests, ensure that:
 
 - The microservice APIs that you want to test are running.
 - The EC2 instance DNS name is set correctly in the test scripts.
-- The test scripts have execute permissions.
+- The test scripts have execute permissions - see [# Give execute permissions to the test scripts](#give-execute-permissions-to-the-test-scripts).
+
+#### Update EC2 Instance DNS Names
 
 You can automatically update the EC2 instance DNS name in the test scripts by running the following command:
 
 ```bash
-./tests/microservicesAPIs/update-dns.sh
+./update-dns.sh
 ```
 
-To run the tests from the project root, execute the following command in your terminal:
+#### Test Kong
+
+To run the tests using Kong, you can run the following script to automatically update the DNS names in the test scripts:
 
 ```bash
-./tests/microservicesAPIs/<test_script_name>.sh
+./use_kong.sh
 ```
 
-### Available Test Scripts
+#### Run all tests
+
+To run all the tests (both using Kong and without Kong), execute the following command in your terminal:
+
+```bash
+./run_all_tests.sh
+```
+
+#### Give execute permissions to the test scripts
+
+You can give execute permissions to the test scripts by running the following command:
+
+```bash
+chmod +x ./*.sh
+```
+
+### Available Scripts
+
+Test Microservices:
 
 - [crossSellingRecomendations.sh](../../microservicesAPIs/crossSellingRecommendations.sh): Tests the cross-selling recommendations microservice API.
   - Check this [test documentation](crossSellingRecommendations.md) for more details.
@@ -46,3 +79,9 @@ To run the tests from the project root, execute the following command in your te
   - Check this [test documentation](selledProductRecommendations.md) for more details.
 - [shops.sh](../../microservicesAPIs/shops.sh): Tests the shops microservice API.
   - Check this [test documentation](shops.md) for more details.
+
+Other scripts:
+
+- [update-dns.sh](../../microservicesAPIs/update-dns.sh): Updates the EC2 instance DNS names and port in the test scripts to use the current EC2 instance DNS name and port.
+- [use_kong.sh](../../microservicesAPIs/use_kong.sh): Updates the EC2 instance DNS names and port in the test scripts to use the Kong API Gateway DNS name and port.
+- [run_all_tests.sh](../../microservicesAPIs/run_all_tests.sh): Runs all the test scripts in the current directory.
