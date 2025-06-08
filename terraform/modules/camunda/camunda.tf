@@ -50,27 +50,12 @@ output "CamundaAddress" {
 }
 
 resource "null_resource" "camundaSetup" {
-
-  connection {
-    type        = "ssh"
-    host        = aws_instance.InstallCamundaEngine.public_dns
-    user        = "ec2-user"
-    private_key = file("../labsuser.pem")
-    timeout     = "30s"
+  provisioner "local-exec" {
+    command = <<EOT
+    chmod +x ${var.basePath}setup.sh
+    publicdns_camunda=${aws_instance.InstallCamundaEngine.public_dns} ${var.basePath}setup.sh
+    EOT
   }
 
-  provisioner "file" {
-    content = templatefile("${var.basePath}setup.sh", {
-      publicdns_camunda = aws_instance.InstallCamundaEngine.public_dns
-    })
-    destination = "/tmp/setup.sh"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "chmod +x /tmp/setup.sh",
-      "sudo /tmp/setup.sh",
-      "rm -rf /tmp/setup.sh",
-    ]
-  }
+  depends_on = [aws_instance.InstallCamundaEngine]
 }
