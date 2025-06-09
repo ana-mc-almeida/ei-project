@@ -73,7 +73,9 @@
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0awuzpj</bpmn:incoming>
     </bpmn:callActivity>
-    <bpmn:sequenceFlow id="Flow_0awuzpj" sourceRef="Gateway_0pn4ll9" targetRef="Activity_01uqr0p" />
+    <bpmn:sequenceFlow id="Flow_0awuzpj" name="Read Customer" sourceRef="Gateway_0pn4ll9" targetRef="Activity_01uqr0p">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Operation == "READ"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0ppdg7z">
@@ -148,6 +150,9 @@
       <bpmndi:BPMNEdge id="Flow_0awuzpj_di" bpmnElement="Flow_0awuzpj">
         <di:waypoint x="544" y="229" />
         <di:waypoint x="680" y="133" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="590" y="123" width="79" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
