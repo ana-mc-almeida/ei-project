@@ -12,6 +12,7 @@
         <bpmn:flowNodeRef>Activity_03q04od</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1svyuki</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0ubd36x</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_01uqr0p</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:sequenceFlow id="Flow_1c2hrza" sourceRef="Activity_03q04od" targetRef="Gateway_0pn4ll9" />
@@ -21,6 +22,7 @@
       <bpmn:outgoing>Flow_0eqnv6a</bpmn:outgoing>
       <bpmn:outgoing>Flow_1femoss</bpmn:outgoing>
       <bpmn:outgoing>Flow_0663kye</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0awuzpj</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_0eqnv6a" name="Create Customer" sourceRef="Gateway_0pn4ll9" targetRef="Activity_1nljwn8">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Operation == "CREATE"}</bpmn:conditionExpression>
@@ -65,6 +67,13 @@
     <bpmn:endEvent id="Event_0ubd36x">
       <bpmn:incoming>Flow_0663kye</bpmn:incoming>
     </bpmn:endEvent>
+    <bpmn:callActivity id="Activity_01uqr0p" name="Call Customer Read Subprocess" calledElement="BusinessActor1CustomerRead">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="${execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0awuzpj</bpmn:incoming>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_0awuzpj" sourceRef="Gateway_0pn4ll9" targetRef="Activity_01uqr0p" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0ppdg7z">
@@ -103,6 +112,10 @@
           <dc:Bounds x="497" y="375" width="68" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0tjso1t" bpmnElement="Activity_01uqr0p">
+        <dc:Bounds x="680" y="70" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1c2hrza_di" bpmnElement="Flow_1c2hrza">
         <di:waypoint x="370" y="240" />
         <di:waypoint x="505" y="240" />
@@ -131,6 +144,10 @@
         <bpmndi:BPMNLabel>
           <dc:Bounds x="456" y="283" width="68" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0awuzpj_di" bpmnElement="Flow_0awuzpj">
+        <di:waypoint x="544" y="229" />
+        <di:waypoint x="680" y="133" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

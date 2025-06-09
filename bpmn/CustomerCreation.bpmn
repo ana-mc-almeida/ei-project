@@ -152,7 +152,9 @@
     <ns2:userTask id="Activity_c7b201a0-930d-43aa-aef8-2c5c27078a02" name="Check Customer Creation order" camunda:assignee="demo">
       <ns2:documentation>Please acknowledge that you have received confirmation of the creation.</ns2:documentation>
       <ns2:extensionElements>
-        <camunda:formData />
+        <camunda:formData>
+          <camunda:formField id="customerID" label="customerID" type="string" defaultValue="${customerID}" />
+        </camunda:formData>
       </ns2:extensionElements>
       <ns2:incoming>Flow_0bd7ebb2-8146-48f7-a8ee-630bb9e2c989</ns2:incoming>
       <ns2:outgoing>Flow_0s3x70c</ns2:outgoing>
@@ -311,7 +313,13 @@
             <camunda:inputParameter name="payload">{
 "messageName" : "Message_104fa6j",
 "businessKey" : "${businessKeyRequester}",
-"resultEnabled" : true
+"resultEnabled" : true,
+"processVariables": {
+    "customerID": {
+      "value": "${id}",
+      "type": "String"
+    }
+}
 }</camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
             <camunda:inputParameter name="url">http://localhost:8080/engine-rest/message</camunda:inputParameter>
