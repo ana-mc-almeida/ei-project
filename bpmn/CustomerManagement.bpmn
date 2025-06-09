@@ -13,6 +13,7 @@
         <bpmn:flowNodeRef>Activity_1svyuki</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0ubd36x</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_01uqr0p</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_13x41h7</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:sequenceFlow id="Flow_1c2hrza" sourceRef="Activity_03q04od" targetRef="Gateway_0pn4ll9" />
@@ -23,6 +24,7 @@
       <bpmn:outgoing>Flow_1femoss</bpmn:outgoing>
       <bpmn:outgoing>Flow_0663kye</bpmn:outgoing>
       <bpmn:outgoing>Flow_0awuzpj</bpmn:outgoing>
+      <bpmn:outgoing>Flow_00a5wyd</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_0eqnv6a" name="Create Customer" sourceRef="Gateway_0pn4ll9" targetRef="Activity_1nljwn8">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Operation == "CREATE"}</bpmn:conditionExpression>
@@ -76,6 +78,15 @@
     <bpmn:sequenceFlow id="Flow_0awuzpj" name="Read Customer" sourceRef="Gateway_0pn4ll9" targetRef="Activity_01uqr0p">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Operation == "READ"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_00a5wyd" name="Update Customer" sourceRef="Gateway_0pn4ll9" targetRef="Activity_13x41h7">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Operation == "UPDATE"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:callActivity id="Activity_13x41h7" name="Call Customer Update Subprocess" calledElement="BusinessActor1CustomerUpdate">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="${execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_00a5wyd</bpmn:incoming>
+    </bpmn:callActivity>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0ppdg7z">
@@ -118,6 +129,10 @@
         <dc:Bounds x="680" y="70" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1qe3fpk" bpmnElement="Activity_13x41h7">
+        <dc:Bounds x="630" y="320" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1c2hrza_di" bpmnElement="Flow_1c2hrza">
         <di:waypoint x="370" y="240" />
         <di:waypoint x="505" y="240" />
@@ -152,6 +167,13 @@
         <di:waypoint x="680" y="133" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="590" y="123" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00a5wyd_di" bpmnElement="Flow_00a5wyd">
+        <di:waypoint x="545" y="250" />
+        <di:waypoint x="643" y="320" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="636" y="293" width="88" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
