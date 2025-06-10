@@ -6,10 +6,11 @@ echo "Camunda is up and running!"
 
 cd ../bpmn
 echo "Deploying BPMN files..."
-for file in *.bpmn; do
+
+find . -type f -name "*.bpmn" | while read file; do
   echo "Deploying $file..."
   curl -X POST -H "Content-Type: multipart/form-data" \
-       -F "deployment-name=$file" \
+       -F "deployment-name=$(basename "$file")" \
        -F "data=@$file" \
        http://$publicdns_camunda:8080/engine-rest/deployment/create
   if [ $? -eq 0 ]; then
