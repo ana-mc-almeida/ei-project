@@ -63,7 +63,7 @@
       <ns2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">http://localhost:8080/engine-rest/process-definition/key/BusinessActor2CustomerUpdate/start</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://localhost:8080/engine-rest/process-definition/key/BusinessActor2ShopUpdate/start</camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
             <camunda:inputParameter name="payload">{
 "businessKey":"${execution.processBusinessKey}",
@@ -391,10 +391,6 @@
       <ns4:BPMNShape id="Activity_1nc1oiu_di" bpmnElement="Activity_ec0f63f1-76db-4677-acbe-b1e48c512bb5">
         <ns5:Bounds x="558" y="279" width="100" height="80" />
       </ns4:BPMNShape>
-      <ns4:BPMNShape id="BPMNShape_0trdrh0" bpmnElement="Activity_06moxmf" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <ns5:Bounds x="1310" y="105" width="100" height="80" />
-        <ns4:BPMNLabel />
-      </ns4:BPMNShape>
       <ns4:BPMNShape id="Activity_1mxpr6x_di" bpmnElement="Activity_c7b201a0-930d-43aa-aef8-2c5c27078a02">
         <ns5:Bounds x="1140" y="105" width="100" height="80" />
         <ns4:BPMNLabel />
@@ -411,6 +407,10 @@
       </ns4:BPMNShape>
       <ns4:BPMNShape id="Event_1d13eg4_di" bpmnElement="Event_261ff510-8687-4be0-9a23-9d6d19eafaf3">
         <ns5:Bounds x="242" y="127" width="36" height="36" />
+      </ns4:BPMNShape>
+      <ns4:BPMNShape id="BPMNShape_0trdrh0" bpmnElement="Activity_06moxmf" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <ns5:Bounds x="1310" y="105" width="100" height="80" />
+        <ns4:BPMNLabel />
       </ns4:BPMNShape>
       <ns4:BPMNEdge id="Edge_15618815-50cd-4cc6-acc1-1ccc6b30cd17" bpmnElement="Flow_5903ee45-b2d4-482d-a42d-037a924516aa">
         <ns3:waypoint x="420" y="145" />

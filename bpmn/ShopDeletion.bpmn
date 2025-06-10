@@ -63,7 +63,7 @@
       <ns2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">http://localhost:8080/engine-rest/process-definition/key/BusinessActor2CustomerDeletion/start</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://localhost:8080/engine-rest/process-definition/key/BusinessActor2ShopDeletion/start</camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
             <camunda:inputParameter name="payload">{
 "businessKey":"${execution.processBusinessKey}",
