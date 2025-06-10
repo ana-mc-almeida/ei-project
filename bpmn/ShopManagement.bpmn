@@ -29,7 +29,7 @@
     <bpmn:sequenceFlow id="Flow_0eqnv6a" name="Create Shop" sourceRef="Gateway_0pn4ll9" targetRef="Activity_1nljwn8">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Operation == "CREATE"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:callActivity id="Activity_1nljwn8" name="Call Customer Shop Subprocess" calledElement="BusinessActor1ShopCreation">
+    <bpmn:callActivity id="Activity_1nljwn8" name="Call Shop Create Subprocess" calledElement="BusinessActor1ShopCreation">
       <bpmn:extensionElements>
         <camunda:in businessKey="${execution.processBusinessKey}" />
       </bpmn:extensionElements>
