@@ -66,7 +66,7 @@ curl -X 'POST' \
   -H 'accept: text/plain' \
   -H 'Content-Type: application/json' \
   -d '{
-    "TopicName": "1-continente"
+    "TopicName": "1-2"
 }'
 ```
 

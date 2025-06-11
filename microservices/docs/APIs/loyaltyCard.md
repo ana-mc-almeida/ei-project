@@ -5,16 +5,16 @@ This documentation provides details on how to interact with the Loyalty Card API
 <details>
 <summary>Table Of Contents</summary>
 
-- [GET /LoyaltyCard](#get-loyaltycard)
-- [GET /LoyaltyCard/{id}](#get-loyaltycardid)
-- [GET /LoyaltyCard/{idCustomer}/{idShop}](#get-loyaltycardidcustomeridshop)
-- [POST /LoyaltyCard](#post-loyaltycard)
-- [DELETE /LoyaltyCard/{id}](#delete-loyaltycardid)
-- [DELETE /LoyaltyCard/{idCustomer}/{idShop}](#delete-loyaltycardidcustomeridshop)
+- [GET /Loyaltycard](#get-loyaltycard)
+- [GET /Loyaltycard/{id}](#get-loyaltycardid)
+- [GET /Loyaltycard/{idCustomer}/{idShop}](#get-loyaltycardidcustomeridshop)
+- [POST /Loyaltycard](#post-loyaltycard)
+- [DELETE /Loyaltycard/{id}](#delete-loyaltycardid)
+- [DELETE /Loyaltycard/{idCustomer}/{idShop}](#delete-loyaltycardidcustomeridshop)
 
 </details>
 
-## GET /LoyaltyCard
+## GET /Loyaltycard
 
 Retrieves a list of all loyalty cards.
 
@@ -44,7 +44,7 @@ Returns a JSON array of loyalty card objects, each containing the following fiel
 ]
 ```
 
-## GET /LoyaltyCard/{id}
+## GET /Loyaltycard/{id}
 
 Retrieves a specific loyalty card by its unique ID.
 
@@ -71,7 +71,7 @@ Returns a JSON object containing the loyalty card details:
 }
 ```
 
-## GET /LoyaltyCard/{idCustomer}/{idShop}
+## GET /Loyaltycard/{idCustomer}/{idShop}
 
 Retrieves a loyalty card by customer ID and shop ID.
 
@@ -98,7 +98,7 @@ Returns a JSON object containing the loyalty card details:
 }
 ```
 
-## POST /LoyaltyCard
+## POST /Loyaltycard
 
 Creates a new loyalty card linking a customer to a shop.
 
@@ -137,7 +137,7 @@ Returns a JSON object with the created loyalty card ID:
 }
 ```
 
-## DELETE /LoyaltyCard/{id}
+## DELETE /Loyaltycard/{id}
 
 Deletes a loyalty card by its unique ID.
 
@@ -154,7 +154,7 @@ curl -X 'DELETE' \
 
 </details>
 
-## DELETE /LoyaltyCard/{idCustomer}/{idShop}
+## DELETE /Loyaltycard/{idCustomer}/{idShop}
 
 Deletes a loyalty card based on customer and shop IDs.
 
