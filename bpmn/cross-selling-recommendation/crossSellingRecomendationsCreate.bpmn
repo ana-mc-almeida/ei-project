@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1apliyg" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.34.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.23.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1apliyg" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.35.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.23.0">
   <bpmn:collaboration id="Collaboration_0ppdg7z">
     <bpmn:participant id="Participant_1lkx1s7" name="BUSINESS ACTOR 1" processRef="BusinessActor1CrossSellingRecomendation" />
   </bpmn:collaboration>
@@ -12,10 +12,10 @@
         <bpmn:flowNodeRef>Activity_03q04od</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_04oia4z" name="Executor TK01">
-        <bpmn:flowNodeRef>Activity_1tznu53</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0ae7711</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1m1an6i</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1kc8xs8</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1tznu53</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:sequenceFlow id="Flow_191qriu" sourceRef="StartEvent_1" targetRef="Activity_03q04od" />
@@ -39,6 +39,103 @@
       <bpmn:incoming>Flow_0jv1c2g</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_12m3ahh" sourceRef="Activity_1tznu53" targetRef="Activity_0ae7711" />
+    <bpmn:serviceTask id="Activity_0ae7711" name="Create Cross Selling Recomendation">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="payload">{
+  "idLoyaltyCard": "${LoyaltyCardID}",
+  "idsShops": ${crossSellingRecommendations}
+}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://${KONG_ADDRESS}:8000/CrossSellingRecommendation</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+                <camunda:entry key="Accept">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_12m3ahh</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ycim53</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0ycim53" sourceRef="Activity_0ae7711" targetRef="Activity_0dw2xpt" />
+    <bpmn:userTask id="Activity_03q04od" name="Get Loyalty Card ID, and emit possible Recomendations" camunda:assignee="demo">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="LoyaltyCardID" label="LoyaltyCardID" type="long">
+            <camunda:validation />
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_191qriu</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hkbnh6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1hkbnh6" sourceRef="Activity_03q04od" targetRef="Activity_1m1an6i" />
+    <bpmn:scriptTask id="Activity_1m1an6i" name="Obtain Kong Address" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1hkbnh6</bpmn:incoming>
+      <bpmn:outgoing>Flow_19i8vtk</bpmn:outgoing>
+      <bpmn:script>execution.getProcessInstance().setVariable("KONG_ADDRESS", java.lang.System.getenv("KONG_ADDRESS"));</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_19i8vtk" sourceRef="Activity_1m1an6i" targetRef="Activity_1kc8xs8" />
+    <bpmn:sequenceFlow id="Flow_1jctxxz" sourceRef="Activity_1kc8xs8" targetRef="Activity_1tznu53" />
+    <bpmn:serviceTask id="Activity_1kc8xs8" name="Obtain All Client Purchases From Last Month">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://${KONG_ADDRESS}:8000/Purchase</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="accept">application/json</camunda:entry>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:outputParameter name="ClientPurchases_ignored">
+              <camunda:script scriptFormat="JavaScript">var responseString = connector.getVariable("response");
+var response = S(responseString).elements();
+
+var targetId = connector.getVariable("LoyaltyCardID");
+
+var filtered = [];
+
+var now = new Date();
+var oneMonthAgo = new Date(now);
+oneMonthAgo.setMonth(now.getMonth() - 1);
+
+for (var i = 0; i &lt; response.size(); i++) {
+  var item = response.get(i);
+  var timestampStr = item.prop("timestamp").value();
+
+  var purchaseDate = new Date(timestampStr);
+
+  if (item.prop("loyaltyCard_id").value() == targetId &amp;&amp; purchaseDate &gt;= oneMonthAgo ) {
+filtered.push({
+      id: item.prop("id").value(),
+      timestamp: item.prop("timestamp").value(),
+      price: item.prop("price").value(),
+      product: item.prop("product").value(),
+      supplier: item.prop("supplier").value(),
+      shop_id: item.prop("shop_id").value(),
+      loyaltyCard_id: targetId,
+      discountCoupon_id: item.prop("discountCoupon_id").value()
+    });
+ }
+}
+
+connector.setVariable("ClientPurchases", S(JSON.stringify(filtered)));
+</camunda:script>
+            </camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_19i8vtk</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jctxxz</bpmn:outgoing>
+    </bpmn:serviceTask>
     <bpmn:scriptTask id="Activity_1tznu53" name="Calculate Cross Selling Recommendation" scriptFormat="JavaScript">
       <bpmn:incoming>Flow_1jctxxz</bpmn:incoming>
       <bpmn:outgoing>Flow_12m3ahh</bpmn:outgoing>
@@ -102,109 +199,12 @@ if (minCount == maxCount)
 execution.setVariable("crossSellingRecommendations", null);
 else{
 // Combine
-var crossSelling = maxEntries.map(function(el) { return el.id; })
-  .concat(minEntries.map(function(el) { return el.id; }));
+var crossSelling = maxEntries.map(function(el) { return parseInt(el.id); })
+  .concat(minEntries.map(function(el) { return parseInt(el.id); }));
 
 execution.setVariable("crossSellingRecommendations", JSON.stringify(crossSelling));
 }</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="Activity_0ae7711" name="Create Cross Selling Recomendation">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="payload">{
-  "idLoyaltyCard": "${LoyaltyCardID}",
-  "idsShops": "${crossSellingRecommendations}"
-}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:inputParameter name="url">http://${KONG_ADDRESS}:8000/CrossSellingRecommendation</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="Content-Type">application/json</camunda:entry>
-                <camunda:entry key="Accept">application/json</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_12m3ahh</bpmn:incoming>
-      <bpmn:outgoing>Flow_0ycim53</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_0ycim53" sourceRef="Activity_0ae7711" targetRef="Activity_0dw2xpt" />
-    <bpmn:userTask id="Activity_03q04od" name="Decide customer, through Loyalty Card ID to emit coupons" camunda:assignee="demo">
-      <bpmn:extensionElements>
-        <camunda:formData>
-          <camunda:formField id="LoyaltyCardID" label="LoyaltyCardID" type="long">
-            <camunda:validation />
-          </camunda:formField>
-        </camunda:formData>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_191qriu</bpmn:incoming>
-      <bpmn:outgoing>Flow_1hkbnh6</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:sequenceFlow id="Flow_1hkbnh6" sourceRef="Activity_03q04od" targetRef="Activity_1m1an6i" />
-    <bpmn:scriptTask id="Activity_1m1an6i" name="Obtain Kong Address" scriptFormat="JavaScript">
-      <bpmn:incoming>Flow_1hkbnh6</bpmn:incoming>
-      <bpmn:outgoing>Flow_19i8vtk</bpmn:outgoing>
-      <bpmn:script>execution.getProcessInstance().setVariable("KONG_ADDRESS", java.lang.System.getenv("KONG_ADDRESS"));</bpmn:script>
-    </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="Flow_19i8vtk" sourceRef="Activity_1m1an6i" targetRef="Activity_1kc8xs8" />
-    <bpmn:serviceTask id="Activity_1kc8xs8" name="Obtain All Client Purchases From Last Month">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="method">GET</camunda:inputParameter>
-            <camunda:inputParameter name="url">http://${KONG_ADDRESS}:8000/Purchase</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="accept">application/json</camunda:entry>
-                <camunda:entry key="Content-Type">application/json</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:outputParameter name="ClientPurchases_ignored">
-              <camunda:script scriptFormat="JavaScript">var responseString = connector.getVariable("response");
-var response = S(responseString).elements();
-
-var targetId = connector.getVariable("LoyaltyCardID");
-
-var filtered = [];
-
-var now = new Date();
-var oneMonthAgo = new Date(now);
-oneMonthAgo.setMonth(now.getMonth() - 1);
-
-for (var i = 0; i &lt; response.size(); i++) {
-  var item = response.get(i);
-  var timestampStr = item.prop("timestamp").value();
-
-  var purchaseDate = new Date(timestampStr);
-
-  if (item.prop("loyaltyCard_id").value() == targetId &amp;&amp; purchaseDate &gt;= oneMonthAgo ) {
-filtered.push({
-      id: item.prop("id").value(),
-      timestamp: item.prop("timestamp").value(),
-      price: item.prop("price").value(),
-      product: item.prop("product").value(),
-      supplier: item.prop("supplier").value(),
-      shop_id: item.prop("shop_id").value(),
-      loyaltyCard_id: targetId,
-      discountCoupon_id: item.prop("discountCoupon_id").value()
-    });
- }
-}
-
-connector.setVariable("ClientPurchases", S(JSON.stringify(filtered)));
-</camunda:script>
-            </camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_19i8vtk</bpmn:incoming>
-      <bpmn:outgoing>Flow_1jctxxz</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_1jctxxz" sourceRef="Activity_1kc8xs8" targetRef="Activity_1tznu53" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0ppdg7z">
@@ -230,9 +230,6 @@ connector.setVariable("ClientPurchases", S(JSON.stringify(filtered)));
       <bpmndi:BPMNShape id="Event_1lcokbc_di" bpmnElement="Event_1lcokbc">
         <dc:Bounds x="1032" y="122" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_10qc1q9_di" bpmnElement="Activity_1tznu53">
-        <dc:Bounds x="590" y="280" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_07ih1o6" bpmnElement="Activity_0ae7711" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
         <dc:Bounds x="730" y="280" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -246,8 +243,11 @@ connector.setVariable("ClientPurchases", S(JSON.stringify(filtered)));
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_13cam5b" bpmnElement="Activity_1kc8xs8" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="450" y="280" width="100" height="80" />
+        <dc:Bounds x="430" y="280" width="100" height="80" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_10qc1q9_di" bpmnElement="Activity_1tznu53">
+        <dc:Bounds x="580" y="280" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_191qriu_di" bpmnElement="Flow_191qriu">
         <di:waypoint x="238" y="140" />
@@ -258,7 +258,7 @@ connector.setVariable("ClientPurchases", S(JSON.stringify(filtered)));
         <di:waypoint x="1032" y="140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_12m3ahh_di" bpmnElement="Flow_12m3ahh">
-        <di:waypoint x="690" y="320" />
+        <di:waypoint x="680" y="320" />
         <di:waypoint x="730" y="320" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ycim53_di" bpmnElement="Flow_0ycim53">
@@ -273,11 +273,11 @@ connector.setVariable("ClientPurchases", S(JSON.stringify(filtered)));
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_19i8vtk_di" bpmnElement="Flow_19i8vtk">
         <di:waypoint x="390" y="320" />
-        <di:waypoint x="450" y="320" />
+        <di:waypoint x="430" y="320" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1jctxxz_di" bpmnElement="Flow_1jctxxz">
-        <di:waypoint x="550" y="320" />
-        <di:waypoint x="590" y="320" />
+        <di:waypoint x="530" y="320" />
+        <di:waypoint x="580" y="320" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
