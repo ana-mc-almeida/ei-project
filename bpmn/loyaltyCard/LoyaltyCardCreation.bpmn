@@ -142,7 +142,7 @@
     <ns2:userTask id="Activity_fc1e6910-1008-4a65-96d6-d47bc7a5c702" name="Check LoyaltyCard association order" camunda:assignee="demo">
       <ns2:extensionElements>
         <camunda:formData>
-          <camunda:formField id="productok" label="productok" type="boolean" />
+          <camunda:formField id="productok" label="productok" type="boolean" defaultValue="true" />
           <camunda:formField id="loyaltyCardId" label="loyaltyCardId" type="string" defaultValue="${loyaltyCardId}" />
         </camunda:formData>
       </ns2:extensionElements>
@@ -158,7 +158,7 @@
           <camunda:inputOutput>
             <camunda:inputParameter name="payload">{
 "messageName" : "Message_3p4hhrm",
-"businessKey" : "${businessKey}",
+"businessKey" : "${execution.processBusinessKey}",
 "resultEnabled" : true
 }</camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
@@ -282,7 +282,7 @@
 "businessKey":"${businessKeyRequester}",
 "variables": {
 "ShopID": {"value":"${ShopID}","type":"string"},
-"LoyaltyCardID":{"value":"${LoyaltyCardID}","type":"string"},
+"LoyaltyCardId":{"value":"${LoyaltyCardId}","type":"string"},
 "businessKeyRequester":{"value":"${businessKeyRequester}","type":"string"} 
 } }</camunda:inputParameter>
             <camunda:inputParameter name="headers">
@@ -312,7 +312,7 @@
 "resultEnabled" : true,
 "processVariables": {
     "loyaltyCardId": {
-      "value": "${loyaltyCardId}",
+      "value": "${LoyaltyCardId}",
       "type": "String"
     }
 }
@@ -356,7 +356,7 @@
                 <camunda:entry key="Content-Type">application/json</camunda:entry>
               </camunda:map>
             </camunda:inputParameter>
-            <camunda:outputParameter name="LoyaltyCardID">
+            <camunda:outputParameter name="LoyaltyCardId">
               <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response")).jsonPath("id").numberValue();</camunda:script>
             </camunda:outputParameter>
           </camunda:inputOutput>
@@ -487,7 +487,7 @@
         <camunda:connector>
           <camunda:inputOutput>
             <camunda:inputParameter name="payload">{
-  "TopicName": "${LoyaltyCardID}-${ShopID}"
+  "TopicName": "${LoyaltyCardId}-${ShopID}"
 }</camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
             <camunda:inputParameter name="url">http://${KONG_ADDRESS}:8000/Purchase/Consume</camunda:inputParameter>
@@ -497,7 +497,7 @@
                 <camunda:entry key="Content-Type">application/json</camunda:entry>
               </camunda:map>
             </camunda:inputParameter>
-            <camunda:outputParameter name="topicName">  "${LoyaltyCardID}-${ShopID}"</camunda:outputParameter>
+            <camunda:outputParameter name="topicName">${LoyaltyCardId}-${ShopID}</camunda:outputParameter>
           </camunda:inputOutput>
           <camunda:connectorId>http-connector</camunda:connectorId>
         </camunda:connector>

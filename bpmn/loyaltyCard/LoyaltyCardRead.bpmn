@@ -165,7 +165,7 @@
       <ns2:documentation>Please acknowledge that you have received confirmation of the read.</ns2:documentation>
       <ns2:extensionElements>
         <camunda:formData>
-          <camunda:formField id="loyaltyCardID" label="loyaltyCardID" type="string" defaultValue="${loyaltyCardID}" />
+          <camunda:formField id="LoyaltyCardId" label="LoyaltyCardId" type="string" defaultValue="${LoyaltyCardId}" />
           <camunda:formField id="idShop" label="idShop" type="string" defaultValue="${idShop}" />
           <camunda:formField id="idCustomer" label="idCustomer" type="string" defaultValue="${idCustomer}" />
         </camunda:formData>
@@ -297,17 +297,17 @@
 "resultEnabled" : true,
 "processVariables": {
     "LoyaltyCardId": {
-      "value": "${execution.getVariable('LoyaltyCardId') != null ? execution.getVariable('LoyaltyCardId') : null}",
-      "type": "Long"
+      "value": "${id}",
+      "type": "String"
     },
     "idCustomer": {
-      "value": "${execution.getVariable('idCustomer') != null ? execution.getVariable('idCustomer') : null}",
-      "type": "Long"
+      "value": "${idCustomer}",
+      "type": "String"
     },
     "idShop": {
-      "value": "${execution.getVariable('idShop') != null ? execution.getVariable('idShop') : null}",
-      "type": "Long"
-    },
+      "value": "${idShop}",
+      "type": "String"
+    }
    }
 }</camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
@@ -362,8 +362,18 @@
             <camunda:outputParameter name="idCustomer">
               <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response")).jsonPath("idCustomer").numberValue();</camunda:script>
             </camunda:outputParameter>
-            <camunda:outputParameter name="idShop">
-              <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response")).jsonPath("idShop").numberValue();</camunda:script>
+            <camunda:outputParameter name="idShop_ignore">
+              <camunda:script scriptFormat="JavaScript">var response = S(connector.getVariable("response"));
+
+var arr = response.prop("_idsShops");
+
+var arrValues = [];
+
+for (var i = 0; i &lt; arr.elements().size(); i++) {
+  arrValues.push(arr.elements().get(i).value()); 
+}
+
+connector.setVariable("idShop", arrValues.join(", "));</camunda:script>
             </camunda:outputParameter>
           </camunda:inputOutput>
           <camunda:connectorId>http-connector</camunda:connectorId>

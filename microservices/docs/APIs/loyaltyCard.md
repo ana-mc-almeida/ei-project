@@ -67,7 +67,7 @@ Returns a JSON object containing the loyalty card details:
 {
   "id": <integer>,
   "idCustomer": <integer>,
-  "idShop": <integer>
+  "_idsShops": [<integer>,<integer>,<integer>]
 }
 ```
 

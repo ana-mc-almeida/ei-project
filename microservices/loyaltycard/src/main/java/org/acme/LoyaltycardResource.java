@@ -44,14 +44,14 @@ public class LoyaltycardResource {
 
     @GET
     @Path("{id}")
-    public Multi<Loyaltycard> getCard(Long id) {
+    public Uni<Loyaltycard> getCard(Long id) {
         return Loyaltycard.findById(client, id);
     }
 
     @GET
     @Path("{idCustomer}/{idShop}")
     public Uni<Response> getDual(Long idCustomer, Long idShop) {
-        return Loyaltycard.findById2(client, idCustomer, idShop)
+        return Loyaltycard.findByIdCustomerAndIdShop(client, idCustomer, idShop)
                 .onItem()
                 .transform(loyaltycard -> loyaltycard != null ? Response.ok(loyaltycard)
                         : Response.status(Response.Status.NOT_FOUND))
