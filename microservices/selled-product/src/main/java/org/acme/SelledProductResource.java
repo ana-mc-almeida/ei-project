@@ -39,9 +39,6 @@ public class SelledProductResource {
     @Channel("selledProductByCoupon")
     Emitter<String> emitterCoupon;
 
-    @Channel("selledProductByProduct")
-    Emitter<String> emitterProduct;
-
     void config(@Observes StartupEvent ev) {
 
     }
@@ -56,8 +53,6 @@ public class SelledProductResource {
                 return emitterCoupon;
             case SHOP:
                 return emitterShop;
-            case PRODUCT:
-                return emitterProduct;
             case POSTAL_CODE:
                 return emitterLocation;
             default:
