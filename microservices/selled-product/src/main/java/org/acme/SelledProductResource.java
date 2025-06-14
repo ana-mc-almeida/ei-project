@@ -33,9 +33,6 @@ public class SelledProductResource {
     @Channel("selledProductByLocation")
     Emitter<String> emitterLocation;
 
-    @Channel("selledProductByCustomer")
-    Emitter<String> emitterCustomer;
-
     @Channel("selledProductByCoupon")
     Emitter<String> emitterCoupon;
 
@@ -47,8 +44,6 @@ public class SelledProductResource {
         switch (typeOfAnalysis) {
             case LOYALTY_CARD:
                 return emitterLoyaltyCard;
-            case CUSTOMER:
-                return emitterCustomer;
             case DISCOUNT_COUPON:
                 return emitterCoupon;
             case SHOP:

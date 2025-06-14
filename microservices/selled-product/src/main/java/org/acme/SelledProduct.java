@@ -3,7 +3,7 @@ package org.acme;
 public class SelledProduct {
 
 	public enum TypeOfAnalysis {
-		LOYALTY_CARD, CUSTOMER, DISCOUNT_COUPON, SHOP, PRODUCT, POSTAL_CODE
+		LOYALTY_CARD, DISCOUNT_COUPON, SHOP, POSTAL_CODE
 	}
 
 	public TypeOfAnalysis typeOfAnalysis;
@@ -40,13 +40,13 @@ public class SelledProduct {
 	}
 
 	public static class ProductData {
-		public int productId;
+		public String product;
 		public int count;
 		public double sumPrice;
 
 		@Override
 		public String toString() {
-			return "{productId:" + productId + ", count:" + count + ", sumPrice:" + sumPrice + "}";
+			return "{product:" + product + ", count:" + count + ", sumPrice:" + sumPrice + "}";
 		}
 	}
 }
