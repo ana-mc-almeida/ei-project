@@ -16,6 +16,7 @@
         <bpmn:flowNodeRef>Activity_17dni39</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1kc8xs8</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0ae7711</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0qh5weh</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1tznu53</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
@@ -41,20 +42,20 @@
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1bm9kmj" sourceRef="Activity_03q04od" targetRef="Activity_1m1an6i" />
     <bpmn:sequenceFlow id="Flow_06usou0" sourceRef="Activity_1m1an6i" targetRef="Activity_17dni39" />
-    <bpmn:sequenceFlow id="Flow_1qxs27z" sourceRef="Activity_1kc8xs8" targetRef="Activity_1tznu53" />
+    <bpmn:sequenceFlow id="Flow_1qxs27z" sourceRef="Activity_1kc8xs8" targetRef="Activity_0qh5weh" />
     <bpmn:sequenceFlow id="Flow_0jv1c2g" sourceRef="Activity_0dw2xpt" targetRef="Event_1lcokbc" />
     <bpmn:endEvent id="Event_1lcokbc">
       <bpmn:incoming>Flow_0jv1c2g</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_0ycim53" sourceRef="Activity_0ae7711" targetRef="Activity_0dw2xpt" />
     <bpmn:sequenceFlow id="Flow_0lri7ro" sourceRef="Activity_17dni39" targetRef="Activity_1kc8xs8" />
-    <bpmn:userTask id="Activity_0dw2xpt" name="Cross Selling Recomendations Created" camunda:assignee="demo">
+    <bpmn:userTask id="Activity_0dw2xpt" name="Discount Coupon Analysis Created" camunda:assignee="demo">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="Confirm" label="Confirm" type="boolean" defaultValue="true">
             <camunda:validation />
           </camunda:formField>
-          <camunda:formField id="crossSellingRecommendations" label="crossSellingRecommendations" type="string" defaultValue="${crossSellingRecommendations}" />
+          <camunda:formField id="response" label="response" type="string" defaultValue="${response}" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0ycim53</bpmn:incoming>
@@ -74,6 +75,22 @@
             </camunda:inputParameter>
             <camunda:outputParameter name="idLoyaltyCard">
               <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response")).jsonPath("idLoyaltyCard").numberValue();</camunda:script>
+            </camunda:outputParameter>
+            <camunda:outputParameter name="expirationDate">
+              <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response")).jsonPath("expirationDate").stringValue();</camunda:script>
+            </camunda:outputParameter>
+            <camunda:outputParameter name="idsShops_ignore">
+              <camunda:script scriptFormat="JavaScript">var response = S(connector.getVariable("response"));
+
+var arr = response.prop("idsShops");
+
+var arrValues = [];
+
+for (var i = 0; i &lt; arr.elements().size(); i++) {
+  arrValues.push(arr.elements().get(i).value()); 
+}
+
+connector.setVariable("idsShops", arrValues.join(", "));</camunda:script>
             </camunda:outputParameter>
           </camunda:inputOutput>
           <camunda:connectorId>http-connector</camunda:connectorId>
@@ -102,9 +119,13 @@ var targetId = connector.getVariable("idLoyaltyCard");
 
 var filtered = [];
 
-var now = new Date();
-var oneMonthAgo = new Date(now);
-oneMonthAgo.setMonth(now.getMonth() - 1);
+var expirationDate = new Date(connector.getVariable("expirationDate"));
+var oneMonthBeforeExpirationDate = new Date(expirationDate);
+oneMonthBeforeExpirationDate.setMonth(expirationDate.getMonth() - 1);
+
+var shops = connector.getVariable("idsShops").split(", ").map(s =&gt; parseInt(s));
+
+connector.setVariable("shops_debbug", S(JSON.stringify(shops)));
 
 for (var i = 0; i &lt; response.size(); i++) {
   var item = response.get(i);
@@ -112,7 +133,12 @@ for (var i = 0; i &lt; response.size(); i++) {
 
   var purchaseDate = new Date(timestampStr);
 
-  if (item.prop("loyaltyCard_id").value() == targetId &amp;&amp; purchaseDate &gt;= oneMonthAgo ) {
+  if (
+item.prop("loyaltyCard_id").value() == targetId 
+&amp;&amp; purchaseDate &gt;= oneMonthBeforeExpirationDate 
+&amp;&amp; purchaseDate &lt;= expirationDate
+&amp;&amp; shops.includes(item.prop("shop_id").value())
+) {
 filtered.push({
       id: item.prop("id").value(),
       timestamp: item.prop("timestamp").value(),
@@ -126,6 +152,8 @@ filtered.push({
  }
 }
 
+
+
 connector.setVariable("ClientPurchases", S(JSON.stringify(filtered)));
 </camunda:script>
             </camunda:outputParameter>
@@ -136,7 +164,9 @@ connector.setVariable("ClientPurchases", S(JSON.stringify(filtered)));
       <bpmn:incoming>Flow_0lri7ro</bpmn:incoming>
       <bpmn:outgoing>Flow_1qxs27z</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_0ae7711" name="Create Cross Selling Recomendation">
+    <bpmn:sequenceFlow id="Flow_12m3ahh" sourceRef="Activity_1tznu53" targetRef="Activity_0ae7711" />
+    <bpmn:sequenceFlow id="Flow_0ur1d0w" sourceRef="Activity_0qh5weh" targetRef="Activity_1tznu53" />
+    <bpmn:serviceTask id="Activity_0ae7711" name="Create Discount Coupon Analysis">
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
@@ -153,7 +183,7 @@ connector.setVariable("ClientPurchases", S(JSON.stringify(filtered)));
               </camunda:map>
             </camunda:inputParameter>
             <camunda:outputParameter name="response">
-              <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response"))</camunda:script>
+              <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response")).jsonPath("response").stringValue();</camunda:script>
             </camunda:outputParameter>
           </camunda:inputOutput>
           <camunda:connectorId>http-connector</camunda:connectorId>
@@ -162,18 +192,28 @@ connector.setVariable("ClientPurchases", S(JSON.stringify(filtered)));
       <bpmn:incoming>Flow_12m3ahh</bpmn:incoming>
       <bpmn:outgoing>Flow_0ycim53</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:scriptTask id="Activity_1tznu53" name="Build Prompt" scriptFormat="JavaScript">
+    <bpmn:userTask id="Activity_0qh5weh" name="debbug" camunda:assignee="demo">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="ok" label="ok" type="boolean" defaultValue="trur" />
+        </camunda:formData>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_1qxs27z</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ur1d0w</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="Activity_1tznu53" name="Build Prompt" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_0ur1d0w</bpmn:incoming>
       <bpmn:outgoing>Flow_12m3ahh</bpmn:outgoing>
-      <bpmn:script>var prompt = "Please do a quantitative analysis of the purchases that 
-used the discount coupon with id = "
-prompt += ${execution.getVariable("couponId")}
-prompt += ". This is a business assessment whether the customers valuate the produced discount coupons by using them. This were the purchases of this client:"
-prompt += ${execution.getVariable("ClientPurchases")}
+      <bpmn:script>var couponId = execution.getVariable("couponId");
+var clientPurchases = execution.getVariable("ClientPurchases");
+
+var clientPurchasesString = JSON.stringify(JSON.parse(clientPurchases)).replace(/"/g, "'");
+execution.setVariable("clientPurchasesString", clientPurchasesString);
+
+var prompt = "Please do a quantitative analysis of the purchases that used the discount coupon with id = " + couponId + ". A discount coupon can be applied in all products in a shops. This is a business assessment whether the customers valued the produced discount coupons by using them. These were the purchases of this client while the coupon was valid:" + clientPurchasesString + ". What is your assessment? Please keep your answer under 3500 characters.";
 
 execution.setVariable("prompt", prompt);</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="Flow_12m3ahh" sourceRef="Activity_1tznu53" targetRef="Activity_0ae7711" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0ppdg7z">
@@ -207,10 +247,6 @@ execution.setVariable("prompt", prompt);</bpmn:script>
         <dc:Bounds x="900" y="100" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_07ih1o6" bpmnElement="Activity_0ae7711" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="900" y="280" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1sw1zn8" bpmnElement="Activity_17dni39" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
         <dc:Bounds x="420" y="280" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -219,8 +255,15 @@ execution.setVariable("prompt", prompt);</bpmn:script>
         <dc:Bounds x="560" y="280" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_07ih1o6" bpmnElement="Activity_0ae7711" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="980" y="280" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ta03m5_di" bpmnElement="Activity_0qh5weh">
+        <dc:Bounds x="710" y="280" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_10qc1q9_di" bpmnElement="Activity_1tznu53">
-        <dc:Bounds x="700" y="280" width="100" height="80" />
+        <dc:Bounds x="840" y="280" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_191qriu_di" bpmnElement="Flow_191qriu">
@@ -236,24 +279,30 @@ execution.setVariable("prompt", prompt);</bpmn:script>
         <di:waypoint x="420" y="320" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1qxs27z_di" bpmnElement="Flow_1qxs27z">
-        <di:waypoint x="660" y="320" />
-        <di:waypoint x="700" y="320" />
+        <di:waypoint x="660" y="310" />
+        <di:waypoint x="710" y="310" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0jv1c2g_di" bpmnElement="Flow_0jv1c2g">
         <di:waypoint x="1000" y="140" />
         <di:waypoint x="1032" y="140" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_12m3ahh_di" bpmnElement="Flow_12m3ahh">
-        <di:waypoint x="800" y="320" />
-        <di:waypoint x="900" y="320" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ycim53_di" bpmnElement="Flow_0ycim53">
-        <di:waypoint x="950" y="280" />
+        <di:waypoint x="1030" y="280" />
+        <di:waypoint x="1030" y="230" />
+        <di:waypoint x="950" y="230" />
         <di:waypoint x="950" y="180" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0lri7ro_di" bpmnElement="Flow_0lri7ro">
         <di:waypoint x="520" y="320" />
         <di:waypoint x="560" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12m3ahh_di" bpmnElement="Flow_12m3ahh">
+        <di:waypoint x="940" y="320" />
+        <di:waypoint x="980" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ur1d0w_di" bpmnElement="Flow_0ur1d0w">
+        <di:waypoint x="810" y="320" />
+        <di:waypoint x="840" y="320" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
