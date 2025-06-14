@@ -30,7 +30,7 @@ echo "🔧 Atualizando DNS com update-dns.sh"
 run_tests
 
 echo "🔧 Atualizando DNS para usar Kong com use_kong.sh"
-./use_kong.sh
+cd .. && ./use_kong.sh && cd microservicesAPIs
 
 run_tests
 
