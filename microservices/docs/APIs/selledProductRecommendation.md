@@ -2,6 +2,8 @@
 
 This documentation provides details on how to interact with the Selled Product API endpoints.
 
+This API allows you to send messages with the results of product analysis, which are then published to specific Kafka topics based on the type of analysis.
+
 ## POST /SelledProduct
 
 Sends a message with the result of an analysis to a Kafka topic.
@@ -41,33 +43,41 @@ Depending on the `typeOfAnalysis`, the message will be sent to different Kafka t
 - For "SHOP", it goes to `selledProductByShop`
 - For "POSTAL_CODE", it goes to `selledProductByLocation`
 
-<details>
-<summary>Curl Example</summary>
-
-```bash
-curl -X 'POST' \
-  'http://ec2-54-160-190-56.compute-1.amazonaws.com:8082/SelledProduct' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "typeOfAnalysis": "LOYALTY_CARD",
-  "typeValue": "12",
-  "timestamp": "2022-03-10T12:15:50",
-  "data": [
-    {
-      "product": 10,
-      "count": 10,
-      "sumPrice": 10
-    },
-    {
-      "product": 20,
-      "count": 20,
-      "sumPrice": 20
-    }
-  ]
-}'
-```
-
+> <details>
+> <summary>Curl Example</summary>
+>
+> ```bash
+> curl -X 'POST' \
+>   'http://ec2-54-160-190-56.compute-1.amazonaws.com:8082/SelledProduct' \
+>   -H 'accept: application/json' \
+>   -H 'Content-Type: application/json' \
+>   -d '{
+>   "typeOfAnalysis": "LOYALTY_CARD",
+>   "typeValue": "12",
+>   "timestamp": "2022-03-10T12:15:50",
+>   "data": [
+>     {
+>       "product": 10,
+>       "count": 10,
+>       "sumPrice": 10
+>     },
+>     {
+>       "product": 20,
+>       "count": 20,
+>       "sumPrice": 20
+>     }
+>   ]
+> }'
+> ```
+>
 > In this example, the EC2 instance is accessed via its public DNS name `ec2-34-201-0-73.compute-1.amazonaws.com` on port `8080`. Replace this with your actual instance address if different.
+>
+> </details>
 
-</details>
+<br>
+
+If the request is successful, it will return a response body like this:
+
+```
+Message sent to Kafka Topic: {typeOfAnalysis:<string>, typeValue:<string>, timestamp:<date-time>, data:{product:<string>, count:<number>, sumPrice:<number>}}
+```

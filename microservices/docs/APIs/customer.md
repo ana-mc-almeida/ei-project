@@ -2,6 +2,8 @@
 
 This documentation provides details on how to interact with the Customer API endpoints.
 
+This API allows you to manage customer data, including creating, reading, updating, and deleting customer records.
+
 <details>
 <summary>Table Of Contents</summary>
 
@@ -17,18 +19,22 @@ This documentation provides details on how to interact with the Customer API end
 
 Retrieves a list of all customers.
 
-<details>
-<summary>Curl Example</summary>
+No payload is required for this endpoint.
 
-```bash
-curl -X 'GET' \
-  'http://ec2-44-193-226-242.compute-1.amazonaws.com:8080/Customer' \
-  -H 'accept: application/json'
-```
-
+> <details>
+> <summary>Curl Example</summary>
+>
+> ```bash
+> curl -X 'GET' \
+>   'http://ec2-44-193-226-242.compute-1.amazonaws.com:8080/Customer' \
+>   -H 'accept: application/json'
+> ```
+>
 > In this example, the EC2 instance is accessed via its public DNS name `ec2-44-193-226-242.compute-1.amazonaws.com` on port `8080`. Don't forget to replace this with your actual instance's public DNS or IP address.
+>
+> </details>
 
-</details>
+<br>
 
 Returns a JSON array of customer objects, each containing the following fields:
 
@@ -48,18 +54,24 @@ Returns a JSON array of customer objects, each containing the following fields:
 
 Retrieves a specific customer by ID.
 
-<details>
-<summary>Curl Example</summary>
+No payload is required for this endpoint, but you must replace `{id}` with the actual customer ID you want to retrieve.
 
-```bash
-curl -X 'GET' \
-  'http://ec2-44-193-226-242.compute-1.amazonaws.com:8080/Customer/{id}' \
-  -H 'accept: application/json'
-```
-
+> <details>
+> <summary>Curl Example</summary>
+>
+> ```bash
+> curl -X 'GET' \
+>   'http://ec2-44-193-226-242.compute-1.amazonaws.com:8080/Customer/{id}' \
+>   -H 'accept: application/json'
+> ```
+>
 > In this example, the EC2 instance is accessed via its public DNS name `ec2-44-193-226-242.compute-1.amazonaws.com` on port `8080`. Don't forget to replace this with your actual instance's public DNS or IP address.
+>
+> </details>
 
-Response will be a JSON object containing the customer details:
+<br>
+
+Returns a JSON object containing the customer details:
 
 ```json
 {
@@ -69,8 +81,6 @@ Response will be a JSON object containing the customer details:
   "name": <string>
 }
 ```
-
-</details>
 
 ## POST /Customer
 
@@ -87,6 +97,28 @@ Must include a body like this:
 }
 ```
 
+> <details>
+> <summary>Curl Example</summary>
+>
+> ```bash
+> curl -X 'POST' \
+>   'http://ec2-44-193-226-242.compute-1.amazonaws.com:8080/Customer' \
+>   -H 'accept: application/json' \
+>   -H 'Content-Type: application/json' \
+>   -d '{
+>     "FiscalNumber": 0,
+>     "address": "string",
+>     "postalCode": "string",
+>     "name": "string"
+> }'
+> ```
+>
+> In this example, the EC2 instance is accessed via its public DNS name `ec2-44-193-226-242.compute-1.amazonaws.com` on port `8080`. Don't forget to replace this with your actual instance's public DNS or IP address.
+>
+> </details>
+
+<br>
+
 Returns an object with the created customer ID.
 
 ```json
@@ -95,31 +127,11 @@ Returns an object with the created customer ID.
 }
 ```
 
-<details>
-<summary>Curl Example</summary>
-
-```bash
-curl -X 'POST' \
-  'http://ec2-44-193-226-242.compute-1.amazonaws.com:8080/Customer' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "FiscalNumber": 0,
-    "address": "string",
-    "postalCode": "string",
-    "name": "string"
-}'
-```
-
-> In this example, the EC2 instance is accessed via its public DNS name `ec2-44-193-226-242.compute-1.amazonaws.com` on port `8080`. Don't forget to replace this with your actual instance's public DNS or IP address.
-
-</details>
-
 ## PUT /Customer/{id}
 
 Updates an existing customer by ID.
 
-Must include a body like this:
+You must replace `{id}` with the actual customer ID you want to update and must include a body like this:
 
 ```json
 {
@@ -130,39 +142,49 @@ Must include a body like this:
 }
 ```
 
-<details>
-<summary>Curl Example</summary>
-
-```bash
-curl -X 'PUT' \
-  'http://ec2-44-193-226-242.compute-1.amazonaws.com:8080/Customer/{id}' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "FiscalNumber": 1,
-    "address": "aaaaaa",
-    "postalCode": "ppppp",
-    "name": "nnnnn"
-}'
-```
-
+> <details>
+> <summary>Curl Example</summary>
+>
+> ```bash
+> curl -X 'PUT' \
+>   'http://ec2-44-193-226-242.compute-1.amazonaws.com:8080/Customer/{id}' \
+>   -H 'accept: application/json' \
+>   -H 'Content-Type: application/json' \
+>   -d '{
+>     "FiscalNumber": 1,
+>     "address": "aaaaaa",
+>     "postalCode": "ppppp",
+>     "name": "nnnnn"
+> }'
+> ```
+>
 > In this example, the EC2 instance is accessed via its public DNS name `ec2-44-193-226-242.compute-1.amazonaws.com` on port `8080`. Don't forget to replace this with your actual instance's public DNS or IP address.
+>
+> </details>
 
-</details>
+<br>
+
+No content is returned on success, but the customer is updated with the provided data.
 
 ## DELETE /Customer/{id}
 
 Deletes a customer by ID.
 
-<details>
-<summary>Curl Example</summary>
+No payload is required for this endpoint, but you must replace `{id}` with the actual customer ID you want to delete.
 
-```bash
-curl -X 'DELETE' \
-  'http://ec2-44-193-226-242.compute-1.amazonaws.com:8080/Customer/{id}' \
-  -H 'accept: application/json'
-```
-
+> <details>
+> <summary>Curl Example</summary>
+>
+> ```bash
+> curl -X 'DELETE' \
+>   'http://ec2-44-193-226-242.compute-1.amazonaws.com:8080/Customer/{id}' \
+>   -H 'accept: application/json'
+> ```
+>
 > In this example, the EC2 instance is accessed via its public DNS name `ec2-44-193-226-242.compute-1.amazonaws.com` on port `8080`. Don't forget to replace this with your actual instance's public DNS or IP address.
+>
+> </details>
 
-</details>
+<br>
+
+No content is returned on success, but the customer is deleted.
