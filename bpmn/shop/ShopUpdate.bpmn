@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ns2:definitions xmlns:ns2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:ns3="http://www.omg.org/spec/DD/20100524/DI" xmlns:ns4="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:ns5="http://www.omg.org/spec/DD/20100524/DC" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:modeler="http://camunda.org/schema/modeler/1.0" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.34.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
   <ns2:collaboration id="coll-DEMO2BPMN">
-    <ns2:participant id="Participant_54ffadd1-59f2-4226-b2a8-6c9a775dc604" name="BUSINESS ACTOR 1" processRef="BusinessActor1ShopUpdate" />
-    <ns2:participant id="Participant_69114438-a6e4-41ab-a99a-78848c155372" name="BUSINESS ACTOR 2" processRef="BusinessActor2ShopUpdate" />
+    <ns2:participant id="Participant_54ffadd1-59f2-4226-b2a8-6c9a775dc604" name="SHOP" processRef="ShopUpdate" />
+    <ns2:participant id="Participant_69114438-a6e4-41ab-a99a-78848c155372" name="LAAS" processRef="LaaSShopUpdate" />
     <ns2:messageFlow id="MessageFlow_49010b40-437d-4a53-9a43-aa2ccbfd220d" sourceRef="Activity_0114ffd8-a98c-4bb9-939c-ebe65dd45cea" targetRef="Event_2e52d0f6-d71e-4f32-a59e-8f1adf71ced3" />
     <ns2:messageFlow id="MessageFlow_481e2e6f-159d-47cb-a7fa-058d26dab14a" sourceRef="Activity_06moxmf" targetRef="Event_192495fb-19aa-4af5-b6f6-4e7c13be04b2" />
     <ns2:messageFlow id="MessageFlow_1606d1e3-b0ee-4b2a-bf11-3f5a29844365" sourceRef="Activity_b41a384b-8425-434a-9240-e322025f4bcd" targetRef="Event_4c9998a8-f845-4916-bd06-69f9621f6399" />
     <ns2:messageFlow id="MessageFlow_533b9548-749d-44dc-9ff0-f4d8236ec74a" sourceRef="Activity_0yrey7y" targetRef="Event_442f9699-cfa2-4319-ad7a-3a2ee3dfb9da" />
     <ns2:messageFlow id="Flow_16qrrkn" sourceRef="Activity_04wyitf" targetRef="Event_80deba5e-7f3a-4ef8-a47e-3845129fcae3" />
   </ns2:collaboration>
-  <ns2:process id="BusinessActor1ShopUpdate" name="BusinessActor1ShopUpdate" isExecutable="true" camunda:historyTimeToLive="180">
+  <ns2:process id="ShopUpdate" name="ShopUpdate" isExecutable="true" camunda:historyTimeToLive="180">
     <ns2:laneSet id="LaneSet_27d22d9e-7e02-4a16-bc4a-d981ef93b8fa">
       <ns2:lane id="Lane_c194296b-9ffd-41e8-b853-2e9413ed2741" name="Initiator TK01">
         <ns2:flowNodeRef>Gateway_bdb08ba5-4ead-485d-8ad4-20b91bfcaf79</ns2:flowNodeRef>
@@ -63,7 +63,7 @@
       <ns2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">http://localhost:8080/engine-rest/process-definition/key/BusinessActor2ShopUpdate/start</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://localhost:8080/engine-rest/process-definition/key/LaaSShopUpdate/start</camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
             <camunda:inputParameter name="payload">{
 "businessKey":"${execution.processBusinessKey}",
@@ -166,7 +166,7 @@
       <ns2:outgoing>Flow_5b6f0882-e6ae-455a-ad09-874788b84edb</ns2:outgoing>
     </ns2:sendTask>
   </ns2:process>
-  <ns2:process id="BusinessActor2ShopUpdate" name="BusinessActor2ShopUpdate" isExecutable="true" camunda:historyTimeToLive="180">
+  <ns2:process id="LaaSShopUpdate" name="LaaSShopUpdate" isExecutable="true" camunda:historyTimeToLive="180">
     <ns2:laneSet id="LaneSet_9da11614-5e20-4700-ae07-93060636324d">
       <ns2:lane id="Lane_85f9ec89-2e4a-4fbc-ab68-2c4f2a6dd3a7" name="Executor TK01">
         <ns2:flowNodeRef>Event_89b4f19c-448a-4257-9b5f-0fcb6b027708</ns2:flowNodeRef>

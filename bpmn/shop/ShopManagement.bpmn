@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1apliyg" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.35.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.23.0">
   <bpmn:collaboration id="Collaboration_0ppdg7z">
-    <bpmn:participant id="Participant_1lkx1s7" name="BUSINESS ACTOR 1" processRef="BusinessActor1ShopManagement" />
+    <bpmn:participant id="Participant_1lkx1s7" name="SHOP" processRef="ShopManagement" />
   </bpmn:collaboration>
-  <bpmn:process id="BusinessActor1ShopManagement" name="BusinessActor1ShopManagement" isExecutable="true" camunda:historyTimeToLive="180">
+  <bpmn:process id="ShopManagement" name="ShopManagement" isExecutable="true" camunda:historyTimeToLive="180">
     <bpmn:laneSet id="LaneSet_0x2e29u">
       <bpmn:lane id="Lane_0on28xp" name="Initiator TK01">
         <bpmn:flowNodeRef>Gateway_0pn4ll9</bpmn:flowNodeRef>
@@ -29,7 +29,7 @@
     <bpmn:sequenceFlow id="Flow_0eqnv6a" name="Create Shop" sourceRef="Gateway_0pn4ll9" targetRef="Activity_1nljwn8">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Operation == "CREATE"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:callActivity id="Activity_1nljwn8" name="Call Shop Create Subprocess" calledElement="BusinessActor1ShopCreation">
+    <bpmn:callActivity id="Activity_1nljwn8" name="Call Shop Create Subprocess" calledElement="ShopCreation">
       <bpmn:extensionElements>
         <camunda:in businessKey="${execution.processBusinessKey}" />
       </bpmn:extensionElements>
@@ -54,7 +54,7 @@
       <bpmn:incoming>Flow_191qriu</bpmn:incoming>
       <bpmn:outgoing>Flow_1c2hrza</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:callActivity id="Activity_1svyuki" name="Call Shop Deletion Subprocess" calledElement="BusinessActor1ShopDeletion">
+    <bpmn:callActivity id="Activity_1svyuki" name="Call Shop Deletion Subprocess" calledElement="ShopDeletion">
       <bpmn:extensionElements>
         <camunda:in businessKey="${execution.processBusinessKey}" />
       </bpmn:extensionElements>
@@ -69,7 +69,7 @@
     <bpmn:endEvent id="Event_0ubd36x">
       <bpmn:incoming>Flow_0663kye</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:callActivity id="Activity_01uqr0p" name="Call Shop Read Subprocess" calledElement="BusinessActor1ShopRead">
+    <bpmn:callActivity id="Activity_01uqr0p" name="Call Shop Read Subprocess" calledElement="ShopRead">
       <bpmn:extensionElements>
         <camunda:in businessKey="${execution.processBusinessKey}" />
       </bpmn:extensionElements>
@@ -81,7 +81,7 @@
     <bpmn:sequenceFlow id="Flow_00a5wyd" name="Update Shop" sourceRef="Gateway_0pn4ll9" targetRef="Activity_13x41h7">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Operation == "UPDATE"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:callActivity id="Activity_13x41h7" name="Call Shop Update Subprocess" calledElement="BusinessActor1ShopUpdate">
+    <bpmn:callActivity id="Activity_13x41h7" name="Call Shop Update Subprocess" calledElement="ShopUpdate">
       <bpmn:extensionElements>
         <camunda:in businessKey="${execution.processBusinessKey}" />
       </bpmn:extensionElements>
