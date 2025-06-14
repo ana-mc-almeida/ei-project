@@ -12,6 +12,7 @@ This API allows you to manage customer data, including creating, reading, updati
 - [POST /Customer](#post-customer)
 - [PUT /Customer/{id}](#put-customerid)
 - [DELETE /Customer/{id}](#delete-customerid)
+- [GET /Customer/health](#get-customerhealth)
 
 </details>
 
@@ -188,3 +189,41 @@ No payload is required for this endpoint, but you must replace `{id}` with the a
 <br>
 
 No content is returned on success, but the customer is deleted.
+
+## GET /Customer/health
+
+This endpoint checks the health of the Customer microservice.
+
+No payload is required for this endpoint.
+
+> <details>
+> <summary>Curl Example</summary>
+>
+> ```bash
+> curl -X 'GET' \
+>  'http://ec2-34-201-143-220.compute-1.amazonaws.com:8081/Customer/health' \
+>  -H 'accept: application/json'
+> ```
+>
+> In this example, the EC2 instance is accessed via its public DNS name `ec2-34-201-143-220.compute-1.amazonaws.com` on port `8081`. Don't forget to replace this with your actual instance's public DNS or IP address.
+>
+> </details>
+
+<br>
+
+Returns a JSON object indicating the health status like this:
+
+```json
+{
+  "checks": {
+    "database": "UP"
+  },
+  "status": "UP",
+  "timestamp": 1749941993631
+}
+```
+
+If the service or the database are not healthy, the status will reflect that:
+
+- If the service is down, the status will be "DOWN".
+- If the database is down, the status will be "DOWN".

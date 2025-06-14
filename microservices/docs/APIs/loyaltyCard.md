@@ -13,6 +13,7 @@ This API allows you to manage loyalty cards, including retrieving, creating, and
 - [POST /Loyaltycard](#post-loyaltycard)
 - [DELETE /Loyaltycard/{id}](#delete-loyaltycardid)
 - [DELETE /Loyaltycard/{idCustomer}/{idShop}](#delete-loyaltycardidcustomeridshop)
+- [GET /Loyaltycard/health](#get-loyaltycardhealth)
 
 </details>
 
@@ -198,3 +199,41 @@ curl -X 'DELETE' \
 <br>
 
 No content is returned on success, but the loyalty card is deleted.
+
+## GET /Loyaltycard/health
+
+Checks the health status of the Loyalty Card microservice.
+
+No payload is required for this endpoint.
+
+> <details>
+> <summary>Curl Example</summary>
+>
+> ```bash
+> curl -X 'GET' \
+>   'http://ec2-54-242-137-75.compute-1.amazonaws.com:8081/Loyaltycard/health' \
+>   -H 'accept: application/json'
+> ```
+>
+> In this example, the EC2 instance is accessed via its public DNS name `ec2-54-242-137-75.compute-1.amazonaws.com` on port `8081`. Replace the public DNS with your actual instance address if different.
+>
+> </details>
+
+<br>
+
+Returns a JSON object indicating the health status like this:
+
+```json
+{
+  "checks": {
+    "database": "UP"
+  },
+  "status": "UP",
+  "timestamp": 1749942923929
+}
+```
+
+If the service or the database are not healthy, the status will reflect that:
+
+- If the service is down, the status will be "DOWN".
+- If the database is down, the status will be "DOWN".

@@ -81,3 +81,41 @@ If the request is successful, it will return a response body like this:
 ```
 Message sent to Kafka Topic: {typeOfAnalysis:<string>, typeValue:<string>, timestamp:<date-time>, data:{product:<string>, count:<number>, sumPrice:<number>}}
 ```
+
+## GET /SelledProduct/health
+
+Checks the health status of the Selled Product microservice.
+
+No payload is required for this endpoint.
+
+> <details>
+> <summary>Curl Example</summary>
+>
+> ```bash
+> curl -X 'GET' \
+>   'http://ec2-54-242-137-75.compute-1.amazonaws.com:8082/SelledProduct/health' \
+>   -H 'accept: */*'
+> ```
+>
+> In this example, the EC2 instance is accessed via its public DNS name `ec2-54-242-137-75.compute-1.amazonaws.com` on port `8082`. Replace this with your actual instance address if different.
+>
+> </details>
+
+<br>
+
+If the service is healthy, it will return a response body like this:
+
+```json
+{
+  "checks": {
+    "kafka_servers": "CONFIGURED"
+  },
+  "status": "UP",
+  "timestamp": 1749943213714
+}
+```
+
+If the service or the Kafka servers are not healthy, the status will reflect that:
+
+- If the service is down, the status will be "DOWN".
+- If the Kafka servers are not configured, the Kafka check will indicate "NOT CONFIGURED".

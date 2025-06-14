@@ -10,6 +10,7 @@ This documentation provides details on how to interact with the Shop API endpoin
 - [POST /Shop](#post-shop)
 - [PUT /Shop/{id}](#put-shopid)
 - [DELETE /Shop/{id}](#delete-shopid)
+- [GET /Shop/health](#get-shophealth)
 
 </details>
 
@@ -180,3 +181,41 @@ No payload is required for this endpoint, but you must replace `{id}` with the a
 <br>
 
 No content is returned on success, but the shop is deleted.
+
+## GET /Shop/health
+
+This endpoint checks the health of the Shop microservice.
+
+No payload is required for this endpoint.
+
+> <details>
+> <summary>Curl Example</summary>
+>
+> ```bash
+> curl -X 'GET' \
+>   'http://ec2-54-242-137-75.compute-1.amazonaws.com:8080/Shop/health' \
+>   -H 'accept: application/json'
+> ```
+>
+> In this example, the EC2 instance is accessed via its public DNS name `ec2-54-242-137-75.compute-1.amazonaws.com` on port `8080`. Don't forget to replace this with your actual instance's public DNS or IP address.
+>
+> </details>
+
+<br>
+
+Returns a JSON object indicating the health status like this:
+
+```json
+{
+  "checks": {
+    "database": "UP"
+  },
+  "status": "UP",
+  "timestamp": 1749943153750
+}
+```
+
+If the service or the database are not healthy, the status will reflect that:
+
+- If the service is down, the status will be "DOWN".
+- If the database is down, the status will be "DOWN".

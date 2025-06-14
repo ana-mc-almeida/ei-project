@@ -11,6 +11,7 @@ This API allows you to manage discount coupons, including retrieving, creating, 
 - [GET /DiscountCoupon/{id}](#get-discountcouponid)
 - [POST /DiscountCoupon](#post-discountcoupon)
 - [DELETE /DiscountCoupon/{id}](#delete-discountcouponid)
+- [GET /DiscountCoupon/health](#get-discountcouponhealth)
 
 </details>
 
@@ -150,3 +151,43 @@ curl -X 'DELETE' \
 <br>
 
 No content is returned on success, but the discount coupon is deleted.
+
+## GET /DiscountCoupon/health
+
+This endpoint checks the health of the Discount Coupon microservice.
+
+No payload is required for this endpoint.
+
+> <details>
+> <summary>Curl Example</summary>
+>
+> ```bash
+> curl -X 'GET' \
+>   'http://ec2-52-23-238-172.compute-1.amazonaws.com:8080/DiscountCoupon/health' \
+>   -H 'accept: application/json'
+> ```
+>
+> In this example, the EC2 instance is accessed via its public DNS name `ec2-52-23-238-172.compute-1.amazonaws.com` on port `8080`. Replace this with your actual instance address if different.
+>
+> </details>
+
+<br>
+
+Returns a JSON object indicating the health status like this:
+
+```json
+{
+  "checks": {
+    "kafka_servers": "CONFIGURED",
+    "database": "UP"
+  },
+  "status": "UP",
+  "timestamp": 1749942265190
+}
+```
+
+If the service, the database or the Kafka servers are not healthy, the status will reflect that:
+
+- If the service is down, the status will be "DOWN".
+- If the database is down, the database check will indicate "DOWN".
+- If the Kafka servers are not configured, the Kafka check will indicate "NOT CONFIGURED".
