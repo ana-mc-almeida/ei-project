@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ns2:definitions xmlns:ns2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:ns3="http://www.omg.org/spec/DD/20100524/DI" xmlns:ns4="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:ns5="http://www.omg.org/spec/DD/20100524/DC" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:modeler="http://camunda.org/schema/modeler/1.0" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.34.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
   <ns2:collaboration id="coll-DEMO2BPMN">
-    <ns2:participant id="Participant_35abdb70-ab23-431b-aaae-244b9137cf46" name="BUSINESS ACTOR 1" processRef="BusinessActor1LoyaltyCardCreation" />
-    <ns2:participant id="Participant_76df3ca7-833d-4742-b903-00df33f6cedf" name="BUSINESS ACTOR 2" processRef="BusinessActor2LoyaltyCardCreation" />
-    <ns2:participant id="Participant_b2aa6fc7-e981-472e-be0e-3c861e9b20b3" name="BUSINESS ACTOR 3" processRef="BusinessActor3LoyaltyCardCreation" />
+    <ns2:participant id="Participant_35abdb70-ab23-431b-aaae-244b9137cf46" name="CUSTOMER" processRef="LoyaltyCardCreation" />
+    <ns2:participant id="Participant_76df3ca7-833d-4742-b903-00df33f6cedf" name="LAAS - LOYALTYCARD" processRef="LaaSLoyaltyCardCreation" />
+    <ns2:participant id="Participant_b2aa6fc7-e981-472e-be0e-3c861e9b20b3" name="LAAS - PURCHASES" processRef="LaaSPurchasesLoyaltyCardCreation" />
     <ns2:messageFlow id="MessageFlow_cbea70d9-e9d1-4f59-aaba-33b2f9c4e1d9" sourceRef="Activity_0114ffd8-a98c-4bb9-939c-ebe65dd45cea" targetRef="Event_ae6cefc1-5f4e-4807-9900-6da813149481" />
     <ns2:messageFlow id="MessageFlow_0627db6b-ad07-4fde-a80f-e240f65dc265" sourceRef="Activity_18rp91s" targetRef="Event_44c9ea63-0631-4965-83ef-61b32ab64d25" />
     <ns2:messageFlow id="MessageFlow_b32796fb-8ee6-498a-b75b-d1ac3064a076" sourceRef="Activity_00xj0tw" targetRef="Event_6bab8eb5-3564-45f6-ac75-17753b59a9eb" />
@@ -14,9 +14,9 @@
     <ns2:messageFlow id="Flow_0vwlybj" sourceRef="Activity_1f9kf1o" targetRef="Event_86d80ff4-5837-425a-9766-e43e7f474a83" />
     <ns2:messageFlow id="Flow_1nozc8a" sourceRef="Activity_0yrey7y" targetRef="Event_442f9699-cfa2-4319-ad7a-3a2ee3dfb9da" />
   </ns2:collaboration>
-  <ns2:process id="BusinessActor1LoyaltyCardCreation" name="BusinessActor1LoyaltyCardCreation" isExecutable="true" camunda:historyTimeToLive="180">
+  <ns2:process id="LoyaltyCardCreation" name="LoyaltyCardCreation" isExecutable="true" camunda:historyTimeToLive="180">
     <ns2:laneSet id="LaneSet_1c069fe6-767f-478f-9a93-8f9557b15d70">
-      <ns2:lane id="Lane_26cc0f95-b5ff-4ea6-a20f-eb34f54650de" name="Initiator TK01">
+      <ns2:lane id="Lane_26cc0f95-b5ff-4ea6-a20f-eb34f54650de" name="Initiator LoyaltyCard">
         <ns2:flowNodeRef>Activity_1m1an6i</ns2:flowNodeRef>
         <ns2:flowNodeRef>Activity_9841ec7e-705e-4a46-9924-61aed9dc6c00</ns2:flowNodeRef>
         <ns2:flowNodeRef>Activity_1fmgg2w</ns2:flowNodeRef>
@@ -102,7 +102,7 @@
       <ns2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">http://localhost:8080/engine-rest/process-definition/key/BusinessActor2LoyaltyCardCreation/start</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://localhost:8080/engine-rest/process-definition/key/LaaSLoyaltyCardCreation/start</camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
             <camunda:inputParameter name="payload">{
 "businessKey":"${execution.processBusinessKey}",
@@ -201,9 +201,9 @@
     <ns2:sequenceFlow id="Flow_1l8l1dz" sourceRef="Activity_fc1e6910-1008-4a65-96d6-d47bc7a5c702" targetRef="Activity_0yx4344" />
     <ns2:sequenceFlow id="Flow_06xvblc" sourceRef="Activity_0yx4344" targetRef="Event_4dd05a0a-2a67-4565-bd13-0c61961afd52" />
   </ns2:process>
-  <ns2:process id="BusinessActor2LoyaltyCardCreation" name="BusinessActor2LoyaltyCardCreation" isExecutable="true" camunda:historyTimeToLive="180">
+  <ns2:process id="LaaSLoyaltyCardCreation" name="LaaSLoyaltyCardCreation" isExecutable="true" camunda:historyTimeToLive="180">
     <ns2:laneSet id="LaneSet_153a0587-57a1-4913-af5a-9b780f85a065">
-      <ns2:lane id="Lane_0ef45123-e62a-43d1-ae41-47ab2a18856c" name="Executor TK01">
+      <ns2:lane id="Lane_0ef45123-e62a-43d1-ae41-47ab2a18856c" name="Executor LoyaltyCard">
         <ns2:flowNodeRef>Event_d3b56817-2356-4a8d-92c3-2ba732773389</ns2:flowNodeRef>
         <ns2:flowNodeRef>Event_c61bca2b-2c96-4163-9b8a-72b56b853f50</ns2:flowNodeRef>
         <ns2:flowNodeRef>Activity_00xj0tw</ns2:flowNodeRef>
@@ -218,7 +218,7 @@
         <ns2:flowNodeRef>Event_0ld7huy</ns2:flowNodeRef>
         <ns2:flowNodeRef>Activity_0yrey7y</ns2:flowNodeRef>
       </ns2:lane>
-      <ns2:lane id="Lane_b6dee7aa-be68-4579-971d-7f419b06441d" name="Initiator TK02">
+      <ns2:lane id="Lane_b6dee7aa-be68-4579-971d-7f419b06441d" name="Initiator Purchases">
         <ns2:flowNodeRef>Event_0cb90a1e-39a3-495d-a3ac-2553492163ee</ns2:flowNodeRef>
         <ns2:flowNodeRef>Activity_1f9kf1o</ns2:flowNodeRef>
         <ns2:flowNodeRef>Activity_fdcd84ce-514c-4a3a-a44c-da80d1c96a60</ns2:flowNodeRef>
@@ -276,7 +276,7 @@
       <ns2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">http://localhost:8080/engine-rest/process-definition/key/BusinessActor3LoyaltyCardCreation/start</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://localhost:8080/engine-rest/process-definition/key/LaaSPurchasesLoyaltyCardCreation/start</camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
             <camunda:inputParameter name="payload">{
 "businessKey":"${businessKeyRequester}",
@@ -461,9 +461,9 @@
     <ns2:sequenceFlow id="Flow_0bedca68-f247-45d9-8839-64b1fef427e8" sourceRef="Event_ae6cefc1-5f4e-4807-9900-6da813149481" targetRef="Activity_e67ad816-e9da-4c51-868d-951fdcd37132" />
     <ns2:sequenceFlow id="Flow_0jht5r4" sourceRef="Activity_0yrey7y" targetRef="Event_0ld7huy" />
   </ns2:process>
-  <ns2:process id="BusinessActor3LoyaltyCardCreation" name="BusinessActor3LoyaltyCardCreation" isExecutable="true" camunda:historyTimeToLive="180">
+  <ns2:process id="LaaSPurchasesLoyaltyCardCreation" name="LaaSPurchasesLoyaltyCardCreation" isExecutable="true" camunda:historyTimeToLive="180">
     <ns2:laneSet id="LaneSet_8d4a8c91-4f59-475e-85a9-8dccb99460de">
-      <ns2:lane id="Lane_339f5a87-9c8c-4319-80ae-e11b773bbcbd" name="Executor TK02">
+      <ns2:lane id="Lane_339f5a87-9c8c-4319-80ae-e11b773bbcbd" name="Executor Purchases">
         <ns2:flowNodeRef>Event_86d80ff4-5837-425a-9766-e43e7f474a83</ns2:flowNodeRef>
         <ns2:flowNodeRef>Event_1afbbcf8-236a-4e08-ad6a-177a198c989a</ns2:flowNodeRef>
         <ns2:flowNodeRef>Activity_1kc8xs8</ns2:flowNodeRef>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1apliyg" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.34.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.23.0">
   <bpmn:collaboration id="Collaboration_0ppdg7z">
-    <bpmn:participant id="Participant_1lkx1s7" name="BUSINESS ACTOR 1" processRef="BusinessActor1LoyaltyCardManagement" />
+    <bpmn:participant id="Participant_1lkx1s7" name="CUSTOMER" processRef="LoyaltyCardManagement" />
   </bpmn:collaboration>
-  <bpmn:process id="BusinessActor1LoyaltyCardManagement" name="BusinessActor1LoyaltyCardManagement" isExecutable="true" camunda:historyTimeToLive="180">
+  <bpmn:process id="LoyaltyCardManagement" name="LoyaltyCardManagement" isExecutable="true" camunda:historyTimeToLive="180">
     <bpmn:laneSet id="LaneSet_0x2e29u">
-      <bpmn:lane id="Lane_0on28xp" name="Initiator TK01">
+      <bpmn:lane id="Lane_0on28xp" name="InitiatorLaaS">
         <bpmn:flowNodeRef>Gateway_0pn4ll9</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_03q04od</bpmn:flowNodeRef>
@@ -51,13 +51,13 @@
     <bpmn:endEvent id="Event_0ubd36x">
       <bpmn:incoming>Flow_0663kye</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:callActivity id="Activity_1svyuki" name="Call LoyaltyCard Deletion Subprocess" calledElement="BusinessActor1LoyaltyCardDeletion">
+    <bpmn:callActivity id="Activity_1svyuki" name="Call LoyaltyCard Deletion Subprocess" calledElement="LoyaltyCardDeletion">
       <bpmn:extensionElements>
         <camunda:in businessKey="${execution.processBusinessKey}" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1femoss</bpmn:incoming>
     </bpmn:callActivity>
-    <bpmn:callActivity id="Activity_01uqr0p" name="Call LoyaltyCard Read Subprocess" calledElement="BusinessActor1LoyaltyCardRead">
+    <bpmn:callActivity id="Activity_01uqr0p" name="Call LoyaltyCard Read Subprocess" calledElement="LoyaltyCardRead">
       <bpmn:extensionElements>
         <camunda:in businessKey="${execution.processBusinessKey}" />
       </bpmn:extensionElements>
@@ -69,7 +69,7 @@
     <bpmn:sequenceFlow id="Flow_1swciqg" sourceRef="Gateway_0pn4ll9" targetRef="Activity_1986i2t">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Operation == "CREATE"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:callActivity id="Activity_1986i2t" name="Call LoyaltyCard Creation Subprocess" calledElement="BusinessActor1LoyaltyCardCreation">
+    <bpmn:callActivity id="Activity_1986i2t" name="Call LoyaltyCard Creation Subprocess" calledElement="LoyaltyCardCreation">
       <bpmn:extensionElements>
         <camunda:in businessKey="${execution.processBusinessKey}" />
       </bpmn:extensionElements>
