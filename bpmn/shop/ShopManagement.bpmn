@@ -5,7 +5,7 @@
   </bpmn:collaboration>
   <bpmn:process id="ShopManagement" name="ShopManagement" isExecutable="true" camunda:historyTimeToLive="180">
     <bpmn:laneSet id="LaneSet_0x2e29u">
-      <bpmn:lane id="Lane_0on28xp" name="Initiator TK01">
+      <bpmn:lane id="Lane_0on28xp" name="Initiator">
         <bpmn:flowNodeRef>Gateway_0pn4ll9</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1nljwn8</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>

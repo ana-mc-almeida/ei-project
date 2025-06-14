@@ -11,7 +11,7 @@
   </ns2:collaboration>
   <ns2:process id="ShopCreation" name="ShopCreation" isExecutable="true" camunda:historyTimeToLive="180">
     <ns2:laneSet id="LaneSet_27d22d9e-7e02-4a16-bc4a-d981ef93b8fa">
-      <ns2:lane id="Lane_c194296b-9ffd-41e8-b853-2e9413ed2741" name="Initiator TK01">
+      <ns2:lane id="Lane_c194296b-9ffd-41e8-b853-2e9413ed2741" name="Initiator">
         <ns2:flowNodeRef>Gateway_bdb08ba5-4ead-485d-8ad4-20b91bfcaf79</ns2:flowNodeRef>
         <ns2:flowNodeRef>Gateway_57cd7c44-845f-4ad1-be32-3aa8f371784f</ns2:flowNodeRef>
         <ns2:flowNodeRef>Event_95f52bbf-82df-475b-b51e-583eb92b41b9</ns2:flowNodeRef>
@@ -168,7 +168,7 @@
   </ns2:process>
   <ns2:process id="LaaSShopCreation" name="LaaSShopCreation" isExecutable="true" camunda:historyTimeToLive="180">
     <ns2:laneSet id="LaneSet_9da11614-5e20-4700-ae07-93060636324d">
-      <ns2:lane id="Lane_85f9ec89-2e4a-4fbc-ab68-2c4f2a6dd3a7" name="Executor TK01">
+      <ns2:lane id="Lane_85f9ec89-2e4a-4fbc-ab68-2c4f2a6dd3a7" name="Executor">
         <ns2:flowNodeRef>Event_192495fb-19aa-4af5-b6f6-4e7c13be04b2</ns2:flowNodeRef>
         <ns2:flowNodeRef>Event_89b4f19c-448a-4257-9b5f-0fcb6b027708</ns2:flowNodeRef>
         <ns2:flowNodeRef>Activity_8a65cc5c-3044-4a2b-a08e-58c41cc97372</ns2:flowNodeRef>
