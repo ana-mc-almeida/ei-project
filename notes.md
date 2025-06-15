@@ -13,108 +13,48 @@
 
 </details>
 
-## Microservices to Implement
+## Questions Group
 
-- [ ] Purchase
-  - CR
-  - Find by
-  - Find all
-  - id | DateTime | preço | produto | supplier | shop | loyalty card |
-  - (DateTime,Price,Product,Supplier,shopname,loyaltycardid) -> id autoincrement
-- [ ] Customer
-  - CRUD
-  - Find by
-  - Find all
-  - id | fiscalNumber | location (Address | PostalCode) | name 
-- [ ] Shop 
-  - CRUD
-  - Find by
-  - Find all
-  - id | location (Address | PostalCode) | name 
-- [ ] Loyalty Card
-  - CRUD
-  - ID | IdClient | IdsShops
-- [ ] Discount Coupon
-  - Create
-  - Find by
-  - Update (?) -> faz sentido se tivermos info de se foi usado
-  - 1 kafka topic e manda-se tudo lá para dentro
-  - id | discount (produto |  (% ou €)) | expirationDate | loyaltyCardId | IdsShops
-- [ ] Cross Selling Recommendation
-  - CRUD
-  - 1 kafka topic e manda-se tudo lá para dentro
-  - id | loyaltyCardId | IdsShops
-- [ ] Selled Product
-  - 1 kafka topic e manda-se tudo lá para dentro
-  - SelledProductByCoupon
-  - SelledProductByCustomer
-  - SelledProductByShop
-  - SelledProductByLocation
-  - SelledProductByLoyaltyCard
-  - Outros: data da compra, preço, desconto, etc
-- [ ] Discount Coupon Analysis
+- [ ] Lidar com respose do get loyalty card by id porque retorna uma lista
+  - [ ] Como mostramos? não era melhor juntar todas as lojas num só array e só tinhamos array para loja ao invés de array para loyalty card?
+- [ ] Não estou a conseguir pôr a funcionar os declare received no loyalty card creation and read
 
-### Database
+## Questions Professor
 
-- LocationType
-  - Address | PostalCode 
+- [ ] Selled Product pode agregar só por 1 nível (e.g.shop) ou se tem de agregar pelo nível **e** por produto
 
-## Questions
+## Melhorar se houver tempo
 
-- [x] Loyalty Card decommission
-  - Desassociar só de uma loja ou de todas?
-    - Fazer dois endpoints diferentes
-  - ID | IdClient | IdsShops
-  - int | int | string JSON
-    - Dupla chave - multiplas linhas
-  - Como fazer com os pontos? Aqui ou no client?
-    - Não há pontos
-- [ ] CRUD para tudo faz sentido?
-- [ ] O que é que se manda para o topic de selled product?
-- [ ] Discount Coupon analysis using Artificial Intelligence
-  - Para quê que é usada a IA se é só uma análise quantitativa?
-  - Não seria para emitir um cupão?
-  - Problemas para depois - camunda
-- [x] Ligação DiscountCoupon e Purchase
-  - Existe? Tem de existir por causa do Discount Coupon Analysis
-  - Pode-se aplicar mais do que um cupão na mesma compra?
-    - Criar tabela auxiliar
-    - Cada cupão pode ter mais do que uma purchase
-    - Cada purchase só pode ter um cupão
-- [x] Cross selling recommendation
-  - só duas lojas ou podem ser mais?
-    - mais do que duas lojas
-- [x] LocationType não pode ser tabela externa para não ter dependencias entre microserviços
-  - Fazer duas colunas
-  - Só fazer analises no postal code
+- [ ] Mostrar os dados do form do actor 1, na user task de verificação do actor 2
+- [ ] Não há forma de ser um form que não dá para alterar (quando estamos a devolver o Id criado)
+- [ ] Lidar com erros `NOT_FOUND` ou assim nos delete, update, get, etc.
+- [ ] Definir os assigns ao invés de estar tudo no demo
 
-### Selled Product Topics
+## Discount Coupon Emission
 
-- Sempre que há uma purchase, recebe um REST
-- Escreve na db com todas as informações - selled product
-- Para cada uma das informações, escrever no topic correspondente
-- IdSelledProduct, Product, Custo, Id-da-info-do-topic
+Regras:
 
-## Notas para o relatório
+- Ganha desconto para a loja X, se for mais do que 3 vezes à loja X no último mês
+- O valor do desconto é inversamente proporcional ao número de vezes que foi à loja X no último mês
+  - 5% > 10 visitas
+  - 10% entre 5 e 10 visitas
+  - 15% entre 3 e 5 visitas
 
-- [ ] Porque é que optamos por fazer a localização como estamos a fazer
-- [ ] Supplier e product só como string
-- [ ] Cada purchase só pode ter no máximo um cupão
-- [ ] Dizer que não faz sentido ter update para o discount coupon
-- [ ] Pusemos ShopName nos topics ao invés de IDs porque é o que tem no enunciado
+## Cross Selling Recommendations
 
+Regras:
 
-- [ ] Ver se não é preciso fazer a cena para garantir que sempre que se apaga uma loja, é preciso apagar todos os registos dela
-  - Exemplo: apagar loja -> apagar cupões e purchases
-  - Acho que não faz sentido porque 1 microserviço não deve saber do outro e 2 deves querer manter os registos das purchases
+- Para o cliente A, ver as lojas a que mais foi e a que menos foi no último mês
+  - Caso hajam lojas empatadas (entre as mais visitadas ou as menos visitadas), escolher random um máximo de 3 lojas
+  - No pior casos, ficamos com um array de 6 ids shops
 
-## Ver com o Daniel
+## Discount Coupon Analysis
 
-- [x] Faz sentido ter um delete para os selled products?
-  - Mais vale a mais do que a menos
+- Para um dado DiscountCoupon X
+- Ver todas as compras do client daquele coupon no time frame do coupon
+- Ver em quantas dessas compras o cliente usou o coupon
+- Perguntar ao ollama o que é que ele acha
 
-## TODO
+## Selled Product Analytics
 
-- [ ] Mudar de coupon para coupon
-- [ ] Alterar ids de resposta dos endpoints
-- [ ] Colocar a data de emissão do cupão
+TODO: Decide after talk with professor

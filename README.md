@@ -8,6 +8,7 @@ Check out the [project statement](project-statement.pdf) for more details.
 
 ```
 /
+├── bpmn/                   # BPMN files for business processes
 ├── microservices/          # Quarkus-based microservices (Customer, Shop, LoyaltyCard, etc.)
 ├── terraform/              # Main Terraform project
 ├── terraform/modules/      # Terraform modules for infrastructure components
@@ -16,7 +17,7 @@ Check out the [project statement](project-statement.pdf) for more details.
 └── destroy_project.sh      # Script to tear down infrastructure
 ```
 
-Check the documentation for the microservices in the [microservices/docs](microservices/docs) directory and the tests in the [tests/docs](tests/docs/) directory.
+Check the documentation for business processes in the [bpmn/docs](bpmn/docs) directory, the microservices in the [microservices/docs](microservices/docs) directory, and the tests in the [tests/docs](tests/docs/) directory.
 
 ## Run the project
 
