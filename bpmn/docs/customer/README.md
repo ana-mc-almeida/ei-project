@@ -18,5 +18,5 @@ Documentation for each operation in the following files:
 
 - [Create Customer](customer_creation.md)
 - [Update Customer](customer_update.md)
-- [Delete Customer](customer_delete.md)
+- [Delete Customer](customer_deletion.md)
 - [Read Customer](customer_read.md)

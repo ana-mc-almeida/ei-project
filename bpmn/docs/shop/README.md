@@ -18,5 +18,5 @@ Documentation for each operation in the following files:
 
 - [Create Shop](shop_creation.md)
 - [Update Shop](shop_update.md)
-- [Delete Shop](shop_delete.md)
+- [Delete Shop](shop_deletion.md)
 - [Read Shop](shop_read.md)
