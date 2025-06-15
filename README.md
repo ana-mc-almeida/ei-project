@@ -25,4 +25,5 @@ See [`running.md`](running.md) for detailed instructions on how to run this proj
 
 ## Deliveries
 
-- Find the report for the first sprint [here](report.pdf).
+- Find the report for the first sprint [here](report_sprint_1.pdf).
+- Find the report for the second sprint [here](report_sprint_2.pdf).
