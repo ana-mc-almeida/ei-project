@@ -10,7 +10,7 @@ Please don't forget to update the `KONG_ADDRESS` variable in the script to point
 
 ## Generate Purchases
 
-After running the `bpmn-better.sh` script the purchases topics already exist in Kafka, so now you can generate purchases using the `LaaSSimulator2025` JAR file.
+After running the `populate-databases.sh` script the purchases topics already exist in Kafka, so now you can generate purchases using the `LaaSSimulator2025` JAR file.
 
 Follow the steps below or check the [Kafka tests documentation](kafka.md) for more details.
 
