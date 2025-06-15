@@ -33,14 +33,8 @@ public class SelledProductResource {
     @Channel("selledProductByLocation")
     Emitter<String> emitterLocation;
 
-    @Channel("selledProductByCustomer")
-    Emitter<String> emitterCustomer;
-
     @Channel("selledProductByCoupon")
     Emitter<String> emitterCoupon;
-
-    @Channel("selledProductByProduct")
-    Emitter<String> emitterProduct;
 
     void config(@Observes StartupEvent ev) {
 
@@ -50,14 +44,10 @@ public class SelledProductResource {
         switch (typeOfAnalysis) {
             case LOYALTY_CARD:
                 return emitterLoyaltyCard;
-            case CUSTOMER:
-                return emitterCustomer;
             case DISCOUNT_COUPON:
                 return emitterCoupon;
             case SHOP:
                 return emitterShop;
-            case PRODUCT:
-                return emitterProduct;
             case POSTAL_CODE:
                 return emitterLocation;
             default:

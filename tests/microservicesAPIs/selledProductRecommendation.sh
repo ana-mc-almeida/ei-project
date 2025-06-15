@@ -1,7 +1,7 @@
 #!/bin/bash
 
-EC2_DNS="ec2-184-72-178-17.compute-1.amazonaws.com"
-PORT=8000
+EC2_DNS="ec2-3-93-17-130.compute-1.amazonaws.com"
+PORT=8082
 API_URL="http://$EC2_DNS:$PORT/SelledProduct"
 
 post_data='{
@@ -10,12 +10,12 @@ post_data='{
   "timestamp": "2022-03-10T12:15:50",
   "data": [
     {
-      "product": 10,
+      "productId": 10,
       "count": 10,
       "sumPrice": 100
     },
     {
-      "product": 20,
+      "productId": 20,
       "count": 20,
       "sumPrice": 200
     }
@@ -28,5 +28,3 @@ if [[ $response == *"Message sent to Kafka Topic"* ]]; then
 else
   echo "Test failed: Response did not contain expected text"
 fi
-
-echo "All tests passed successfully!"
