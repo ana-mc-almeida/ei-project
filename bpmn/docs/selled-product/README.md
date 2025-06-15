@@ -31,4 +31,7 @@ After the selled product analysis is emitted, the initiator must acknowledge tha
 
 The following information is provided:
 
-- **purchasesAnalytics**: The analysis of the selled products.
+- **purchasesAnalytics**: The analysis of the selled products, an array of objects with the following properties:
+  - **product**: The name of the product, a string value.
+  - **count**: The number of times the product was sold, an integer value.
+  - **sumPrice**: The total price of the product sold, a float value.
