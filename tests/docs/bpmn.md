@@ -1,6 +1,6 @@
 # Business Processes Tests Documentation
 
-This document provides instructions on how to run the business process tests in the project without any additional setup, specifically for the Cross-Selling Recommendation, Discount Coupon Emission, Descount Coupon Analysis and Selled Products Analysis business processes.
+This document provides instructions on how to run the business process tests in the project without any additional setup, specifically for the Cross-Selling Recommendation, Discount Coupon Emission, Discount Coupon Analysis and Selled Products Analysis business processes.
 
 ## Populate Databases
 
