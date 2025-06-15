@@ -11,27 +11,49 @@ TEST_SCRIPTS=(
   "shops.sh"
 )
 
+FAILED_TESTS=()
+
+CURRENTLY_RUNNING=""
+
 run_tests() {
-  echo "🚀 Rodando todos os testes..."
+  echo "Running all tests"
 
   for script in "${TEST_SCRIPTS[@]}"; do
-    if [[ -x "./$script" ]]; then
-      echo "▶️ Executando $script"
-      ./"$script"
-    else
-      echo "⚠️ Script $script não encontrado ou não é executável."
-    fi
-  done
+      echo
+      echo
+      echo
+      echo "Running $script"
+      if ./"$script"; then
+        echo
+        echo "$script -> PASSED"
+      else
+        echo
+        echo "$script -> FAILED"
+        FAILED_TESTS+=( "$CURRENTLY_RUNNING - $script" )
+      fi  done
 }
 
-echo "🔧 Atualizando DNS com update-dns.sh"
+echo "Updating DNS to use the EC2 instance"
+CURRENTLY_RUNNING="Microservices APIs Tests"
 ./update-dns.sh
 
 run_tests
 
-echo "🔧 Atualizando DNS para usar Kong com use_kong.sh"
-./use_kong.sh
+echo "Updating to use Kong as API Gateway"
+CURRENTLY_RUNNING="Kong API Gateway Tests"
+cd .. && ./use_kong.sh && cd microservicesAPIs
 
 run_tests
 
-echo "✅ Todos os testes executados antes e depois da mudança para Kong!"
+echo
+echo
+echo "Finished running all tests."
+
+if [ ${#FAILED_TESTS[@]} -eq 0 ]; then
+  echo "All tests passed successfully!"
+else
+  echo "The following tests failed:"
+  for script in "${FAILED_TESTS[@]}"; do
+    echo "- $script"
+  done
+fi
