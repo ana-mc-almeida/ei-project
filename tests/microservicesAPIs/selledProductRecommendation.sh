@@ -24,8 +24,7 @@ post_data='{
 response=$(curl -s -X POST "$API_URL" -H 'accept: application/json' -H 'Content-Type: application/json' -d "$post_data")
 echo "POST selled product response: $response"
 if [[ $response == *"Message sent to Kafka Topic"* ]]; then
-  echo "✅ All tests passed successfully!"
+  echo "All tests passed successfully!"
 else
-  echo "❌ Test failed: Response did not contain expected text"
+  echo "Test failed: Response did not contain expected text"
 fi
-
