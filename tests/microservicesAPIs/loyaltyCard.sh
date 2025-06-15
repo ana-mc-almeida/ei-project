@@ -1,6 +1,6 @@
 #!/bin/bash
 
-EC2_DNS="ec2-18-205-116-184.compute-1.amazonaws.com"
+EC2_DNS="ec2-184-72-178-17.compute-1.amazonaws.com"
 PORT=8000
 API_URL="http://$EC2_DNS:$PORT/Loyaltycard"
 
