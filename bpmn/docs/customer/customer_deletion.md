@@ -1,4 +1,4 @@
-# Customer Deletion <!-- omit in toc -->
+# Delete Customer <!-- omit in toc -->
 
 ![Customer Deletion](./assets/CustomerDeletion.png)
 

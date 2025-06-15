@@ -17,6 +17,10 @@
 The first task to update a customer, it is necessary to provide the following information:
 
 - **CustomerID**: The ID of the customer to be updated, an integer value.
+- **FiscalNumber**: The fiscal number of the customer, an integer value.
+- **LocationAddress**: The address of the customer, a string value.
+- **LocationPostalCode**: The postal code of the customer's location, a string value.
+- **Name**: The name of the customer, a string value.
 
 ## LAAS - Executor: Verify if execute product is possible
 
