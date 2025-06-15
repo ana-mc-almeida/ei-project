@@ -1,6 +1,6 @@
 # Business Processes Tests Documentation
 
-This document provides instructions on how to run the business process tests in the project without any additional setup, specifically for the Cross-Selling Recommendation, Discount Coupon Emission, Descount Coupon Analysis and Selled Products Analysis business processes.
+This document provides instructions on how to run the business process tests in the project without any additional setup, specifically for the Cross-Selling Recommendation, Discount Coupon Emission, Discount Coupon Analysis and Selled Products Analysis business processes.
 
 ## Populate Databases
 
@@ -10,7 +10,7 @@ Please don't forget to update the `KONG_ADDRESS` variable in the script to point
 
 ## Generate Purchases
 
-After running the `bpmn-better.sh` script the purchases topics already exist in Kafka, so now you can generate purchases using the `LaaSSimulator2025` JAR file.
+After running the `populate-databases.sh` script the purchases topics already exist in Kafka, so now you can generate purchases using the `LaaSSimulator2025` JAR file.
 
 Follow the steps below or check the [Kafka tests documentation](kafka.md) for more details.
 

@@ -7,8 +7,7 @@ KONG_KEY="KongAddress"
 DEFAULT_PORT=8000
 
 scripts=(
-  "bpmn_better.sh"
-  "bpmn_init.sh"
+  "populate-databases.sh"
   "$MICROSERVICES_DIR/crossSellingRecomendations.sh"
   "$MICROSERVICES_DIR/customer.sh"
   "$MICROSERVICES_DIR/discountCoupon.sh"
