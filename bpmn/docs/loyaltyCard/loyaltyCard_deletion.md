@@ -17,6 +17,10 @@
 The first task to delete a loyalty card, it is necessary to provide the following information:
 
 - **LoyaltyCardID**: The ID of the loyalty card that will be deleted, an integer value.
+- **CustomerID**: The ID of the customer that owns the loyalty card to be deleted, an integer value.
+- **ShopID**: The ID of the shop where the loyalty card to be deleted was created, an integer value.
+
+The **LoyaltyCardID** can be null if the **CustomerID** and **ShopID** are provided and vice versa. If both are provided, the **LoyaltyCardID** will be used to delete the loyalty card of all shops where the customer has a loyalty card.
 
 ## LAAS - Executor: Verify if execute product is possible
 
